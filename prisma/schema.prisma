@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ROLES =
+// 101 : Admin
+// 102 : Pembeli
+// 103 : Penjual
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @unique @default(uuid())
+  createdAt  DateTime  @default(now())
+  modifiedAt DateTime? @default(now()) @updatedAt
+
+  username    String   @unique
+  password    String
+  namaLengkap String
+  noKoperasi  String?
+  role        ROLES[]  @default([U102])
+  active      Boolean? @default(true)
+  Alamat      Alamat?
+}
+
+model Alamat {
+  id           String    @id @unique @default(cuid())
+  createdAt    DateTime  @default(now())
+  modifiedAt   DateTime? @default(now()) @updatedAt
+  provinsi     String
+  kabupaten    String?
+  kecamatan    String?
+  kodePos      String?
+  detailAlamat String?
+  latitude     Decimal?
+  longitude    Decimal?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+enum ROLES {
+  U101
+  U102
+  U103
+}
