@@ -1,9 +1,9 @@
 export const errorHandler = (err, req, res, next) => {
 	if (err.type === 'auth') {
-		res.status(401).json({pesan: "Tidak terauth"})
+		res.status(401).json({message: "Tidak terauth"})
 	} else if (err.type === 'input') {
-		res.status(400).json({pesan: "masukan salah"})
+		res.status(400).json({message: "masukan salah"})
 	} else {
-		res.status(500).json({pesan: "Kesalahan kami"})
+		res.status(500).json({message: "Kesalahan kami"})
 	}
 }
