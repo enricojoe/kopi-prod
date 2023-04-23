@@ -25,8 +25,8 @@ export const createJWT = (user) => {
   return token
 }
 
-export const protect = (req, res, next) => {
-  const bearer = req.headers.authorization
+export const loggedOn = (req, res, next) => {
+  const bearer = req.headers.authorization || req.headers.Authorization
 
   if (!bearer) {
     res.status(401)
