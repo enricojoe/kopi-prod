@@ -34,7 +34,7 @@ export const signin = async (req, res, next) => {
 		}
 
 		const token = createJWT(user)
-		res.json({ token })
+		res.json({ token, user })
 	} catch (e) {
 		e.type = 'not_found'
 		next(e)
