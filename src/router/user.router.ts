@@ -9,9 +9,9 @@ const user_router = Router()
 // })
 user_router.post("/registrasi", createNewUser)
 user_router.post("/masuk", signin)
-user_router.post("/", loggedOn, profile)
-user_router.post("/perbarui", loggedOn, updateProfile)
-user_router.post("/perbaruialamat", loggedOn, updateAlamat)
+user_router.post("/profile", loggedOn, profile)
+user_router.post("/perbarui-profile", loggedOn, updateProfile)
+user_router.post("/perbarui-alamat", loggedOn, updateAlamat)
 
 // authentikasi
 // produk

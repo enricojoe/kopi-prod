@@ -1,13 +1,34 @@
 import prisma from '../db'
 import { hashPassword, comparePassword, createJWT } from "../modules/auth"
 
+// terdapat 3 jenis akun
+// Pembeli (R101)
+// Toko (R101, R102)
+// Koperasi (R101, R102, R103, R104)
+// terdapat 4 jenis role
+// R101 : Dapat membeli
+// R102 : Dapat menjual
+// R103 : Dapat bertransaksi dengan koperasi lain
+// R104 : Dapat membuat akun toko
+
+
+// Untuk membuat akun
+// Request: (note: req.body berarti dari form)
+// - Username : req.body.username
+// - Password : req.body.password
+// - namaLengkap : req.body.nama_lengkap
+// - jenisAkun : req.body.jenis_akun
+// Response:
+// - Token JWT
 export const createNewUser = async (req, res, next) => {
 	try {
 		const user = await prisma.user.create({
 			data: {
 				username: req.body.username,
 				password: await hashPassword(req.body.password),
-				namaLengkap: req.body.nama_lengkap
+				namaLengkap: req.body.nama_lengkap,
+				noIndukKoperasi: req.body.no_induk_koperasi,
+				jenisAkun: req.body.jenis_akun
 			}
 		})
 		const token = createJWT(user)
@@ -18,6 +39,13 @@ export const createNewUser = async (req, res, next) => {
 	}
 }
 
+// Untuk masuk 
+// Request:
+// - Username : req.body.username
+// - Password : req.body.password
+// Response:
+// - Token JWT
+// - Data user
 export const signin = async (req, res, next) => {
 	try {
 		const user = await prisma.user.findUnique({
@@ -46,6 +74,9 @@ export const profile = async (req, res, next) => {
 		const user = await prisma.user.findUnique({
 			where: {
 				username: req.user.username
+			},
+			include: {
+				Alamat: true
 			}
 		})
 
@@ -64,13 +95,10 @@ export const updateProfile = async (req, res, next) => {
 			data: {
 				username: req.body.username,
 				namaLengkap: req.body.nama_lengkap,
-				noKoperasi: req.body.no_koperasi
-			},
-			include: {
-				Alamat: true
+				noIndukKoperasi: req.body.no_induk_koperasi
 			}
 		})
-		res.json(updateUser)
+		res.json({ updateUser })
 	} catch (e) {
 		next(e)
 	}
@@ -85,24 +113,24 @@ export const updateAlamat = async (req, res, next) => {
 			create: {
 				provinsi: req.body.provinsi,
 				kabupaten: req.body.kabupaten,
-				// kecamatan: req.body.kecamatan,
-				// kodePos: req.body.kode_post,
-				// detailAlamat: req.body.detail_alamat,
-				// latitude: req.body.latitude,
-				// longitude: req.body.longitude,
+				kecamatan: req.body.kecamatan,
+				kodePos: req.body.kode_post,
+				detailAlamat: req.body.detail_alamat,
+				latitude: req.body.latitude,
+				longitude: req.body.longitude,
 				userId: req.user.id
 			},
 			update: {
 				provinsi: req.body.provinsi,
 				kabupaten: req.body.kabupaten,
-				// kecamatan: req.body.kecamatan,
-				// kodePos: req.body.kode_post,
-				// detailAlamat: req.body.detail_alamat,
-				// latitude: req.body.latitude,
-				// longitude: req.body.longitude,
+				kecamatan: req.body.kecamatan,
+				kodePos: req.body.kode_post,
+				detailAlamat: req.body.detail_alamat,
+				latitude: req.body.latitude,
+				longitude: req.body.longitude,
 			}
 		})
-		res.json(createAlamat)
+		res.json({ createAlamat })
 	} catch (e) {
 		next(e)
 	}

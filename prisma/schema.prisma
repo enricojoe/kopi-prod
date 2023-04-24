@@ -18,13 +18,14 @@ model User {
   createdAt  DateTime  @default(now())
   modifiedAt DateTime? @default(now()) @updatedAt
 
-  username    String   @unique
-  password    String
-  namaLengkap String
-  noKoperasi  String?
-  role        ROLES[]  @default([U102])
-  active      Boolean? @default(true)
-  Alamat      Alamat?
+  username        String   @unique
+  password        String
+  namaLengkap     String
+  jenisAkun       String
+  noIndukKoperasi String?
+  role            ROLES[]  @default([R101])
+  active          Boolean? @default(true)
+  Alamat          Alamat?
 }
 
 model Alamat {
@@ -44,7 +45,8 @@ model Alamat {
 }
 
 enum ROLES {
-  U101
-  U102
-  U103
+  R101
+  R102
+  R103
+  R104
 }
