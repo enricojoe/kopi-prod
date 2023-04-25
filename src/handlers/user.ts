@@ -28,7 +28,7 @@ export const createNewUser = async (req, res, next) => {
 				password: await hashPassword(req.body.password),
 				namaLengkap: req.body.nama_lengkap,
 				noIndukKoperasi: req.body.no_induk_koperasi,
-				jenisAkun: req.body.jenis_akun
+				jenisAkun: req.body.jenis_akun 
 			}
 		})
 		const token = createJWT(user)
@@ -69,6 +69,11 @@ export const signin = async (req, res, next) => {
 	}
 }
 
+// Dapetin profil pengguna
+// Request:
+// - Username : req.body.username
+// Response:
+// - Data user + Alamat
 export const profile = async (req, res, next) => {
 	try {
 		const user = await prisma.user.findUnique({
@@ -86,6 +91,13 @@ export const profile = async (req, res, next) => {
 	}
 }
 
+// Update profile pengguna
+// Request:
+// - Username : req.body.username
+// - namaLengkap : req.body.nama_lengkap
+// - noIndukKoperasi : req.body.no_induk_koperasi
+// Response:
+// - Data user yang sudah diupdate
 export const updateProfile = async (req, res, next) => {
 	try {
 		const updateUser = await prisma.user.update({
@@ -104,6 +116,17 @@ export const updateProfile = async (req, res, next) => {
 	}
 }
 
+// Tambah (jika belum ada), update (jika sudah ada) data alamat
+// Request:
+// - provinsi: req.body.provinsi
+// - kabupaten: req.body.kabupaten
+// - kecamatan: req.body.kecamatan
+// - kodePos: req.body.kode_post
+// - detailAlamat: req.body.detail_alamat
+// - latitude: req.body.latitude
+// - longitude: req.body.longitude
+// Response:
+// - Data user dengan alamat yang sudah dibuat/update
 export const updateAlamat = async (req, res, next) => {
 	try {
 		const createAlamat = await prisma.alamat.upsert({

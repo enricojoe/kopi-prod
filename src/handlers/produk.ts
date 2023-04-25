@@ -21,7 +21,13 @@ export const createProduct = async (req, res, next) => {
 	}
 }
 
-export const getProducts = async (req, res) => {
+export const getAllProducts = async (req, res) => {
+	const produk = await prisma.produk.findMany()
+
+	res.json({ data: produk })
+}
+
+export const getUserProducts = async (req, res) => {
 	const user = await prisma.user.findUnique({
 		where: {
 			id: req.user.id
