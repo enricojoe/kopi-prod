@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id         String    @id @unique @default(uuid())
+  id         String    @id @unique @default(cuid())
   createdAt  DateTime  @default(now())
   modifiedAt DateTime? @default(now()) @updatedAt
 
@@ -25,7 +25,16 @@ model User {
   noIndukKoperasi String?
   role            ROLES[]  @default([R101])
   active          Boolean? @default(true)
-  Alamat          Alamat?
+
+  alamat Alamat?
+  produk Produk[]
+}
+
+enum ROLES {
+  R101
+  R102
+  R103
+  R104
 }
 
 model Alamat {
@@ -44,9 +53,19 @@ model Alamat {
   user   User   @relation(fields: [userId], references: [id])
 }
 
-enum ROLES {
-  R101
-  R102
-  R103
-  R104
+model Produk {
+  id         String   @id @unique @default(uuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+  namaProduk String
+  deskripsi  String
+  sku        String?
+  kategori   String[]
+  harga      Float
+  stok       Int
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([id, userId])
 }

@@ -76,7 +76,7 @@ export const profile = async (req, res, next) => {
 				username: req.user.username
 			},
 			include: {
-				Alamat: true
+				alamat: true
 			}
 		})
 
