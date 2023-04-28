@@ -32,12 +32,26 @@ export const createNewUser = async (req, res, next) => {
 			}
 		})
 		const token = createJWT(user)
+
+		const keranjang = await prisma.keranjang.create({
+			data: {
+				userId: user.id
+			}
+		})
+
 		res.json({ token })
 	} catch (e) {
 		e.type = 'input'
 		next(e)
 	}
 }
+
+// Produk
+// toko
+// kuantitas
+// sub total
+// total
+// bisa: Read Delete
 
 // Untuk masuk 
 // Request:
