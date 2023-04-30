@@ -13,7 +13,7 @@ const user_router = Router()
 // })
 user_router.post("/registrasi", createNewUser)
 user_router.post("/masuk", signin)
-user_router.post("/profile", loggedOn, profile)
+user_router.get("/profile", loggedOn, profile)
 user_router.post("/perbarui-profile", loggedOn, updateProfile)
 user_router.post("/perbarui-alamat", loggedOn, updateAlamat)
 
