@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createProduct, getUserProducts, getAllProducts, getProductById, updateProduct, deleteProduct } from "../handlers/produk"
 import { loggedOn } from "../modules/auth"
+import { handleMultipartData } from "../config"
 
 const produk_router = Router()
 

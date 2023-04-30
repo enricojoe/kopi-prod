@@ -172,3 +172,11 @@ export const updateAlamat = async (req, res, next) => {
 		next(e)
 	}
 }
+
+// export const updatePhoto = async (req, res, next) => {
+// 	try {
+// 		const update = await prisma.gambar.upsert({
+			
+// 		})
+// 	}
+// }

@@ -29,6 +29,7 @@ model User {
   alamat    Alamat?
   Keranjang Keranjang?
   produk    Produk[]
+  gambar    GambarProfile?
 }
 
 enum ROLES {
@@ -66,10 +67,13 @@ model Produk {
   kategori   String[]
   harga      Float
   stok       Int
+  terjual Int
 
   userId String
   user   User    @relation(fields: [userId], references: [id])
   Order  Order[]
+
+  gambar GambarProduk[]
 
   @@unique([id, userId])
 }
@@ -88,7 +92,6 @@ model Order {
   subTotal  Int @default(0)
 
   @@unique([produkId, keranjangId])
-
 }
 
 model Keranjang {
@@ -101,4 +104,30 @@ model Keranjang {
 
   order Order[]
   total Float   @default(0)
+}
+
+model RiwayatOrder {
+
+}
+
+model GambarProduk {
+  id         String   @id @unique @default(uuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  gambar Bytes @db.ByteA
+
+  Produk   Produk @relation(fields: [produkId], references: [id])
+  produkId String
+}
+
+model GambarProfile {
+  id         String   @id @unique @default(uuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  gambar Bytes @db.ByteA
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }

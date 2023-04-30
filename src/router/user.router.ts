@@ -2,6 +2,10 @@ import { Router } from "express";
 import { createNewUser, signin, profile, updateProfile, updateAlamat } from "../handlers/user"
 import { loggedOn } from "../modules/auth"
 
+import multer from 'multer'
+const upload = multer({ dest: "upload/" })
+
+
 const user_router = Router()
 
 // user_router.get("/", loggedOn, (req, res) => {
