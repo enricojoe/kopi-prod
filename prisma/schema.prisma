@@ -23,13 +23,14 @@ model User {
   namaLengkap     String
   jenisAkun       String
   noIndukKoperasi String?
+  gambar          String?
   role            ROLES[]  @default([R101])
   active          Boolean? @default(true)
 
   alamat    Alamat?
   Keranjang Keranjang?
   produk    Produk[]
-  gambar    GambarProfile?
+  Order     Order?
 }
 
 enum ROLES {
@@ -57,30 +58,55 @@ model Alamat {
 }
 
 model Produk {
-  id         String   @id @unique @default(uuid())
+  id         String   @id @unique @default(cuid())
   createdAt  DateTime @default(now())
   modifiedAt DateTime @default(now()) @updatedAt
 
   namaProduk String
+  gambar     String[]
   deskripsi  String
   sku        String?
-  kategori   String[]
   harga      Float
   stok       Int
-  terjual Int
+  terjual    Int?
 
   userId String
-  user   User    @relation(fields: [userId], references: [id])
-  Order  Order[]
+  user   User   @relation(fields: [userId], references: [id])
 
-  gambar GambarProduk[]
-
-  @@unique([id, userId])
+  itemKeranjang   ItemKeranjang[]
+  kategori_produk ProdukKategori[]
 }
 
-model Order {
+model Kategori {
+  id         String   @id @unique @default(cuid())
   createdAt  DateTime @default(now())
   modifiedAt DateTime @default(now()) @updatedAt
+
+  kategori  String
+  deskripsi String
+  gambar    String
+
+  produk_kategori ProdukKategori[]
+}
+
+// Relasi produk - kategori
+model ProdukKategori {
+  createdAt DateTime @default(now())
+
+  produk     Produk   @relation(fields: [produkId], references: [id])
+  produkId   String
+  kategori   Kategori @relation(fields: [kategoriId], references: [id])
+  kategoriId String
+
+  @@id([produkId, kategoriId])
+}
+
+model ItemKeranjang {
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  kuantitas Int @default(0)
+  subTotal  Int @default(0)
 
   produkId String
   produk   Produk @relation(fields: [produkId], references: [id])
@@ -88,46 +114,31 @@ model Order {
   Keranjang   Keranjang @relation(fields: [keranjangId], references: [id])
   keranjangId String
 
-  kuantitas Int @default(0)
-  subTotal  Int @default(0)
-
-  @@unique([produkId, keranjangId])
+  @@id([produkId, keranjangId])
 }
 
 model Keranjang {
-  id         String   @id @unique @default(uuid())
+  id         String   @id @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  total Float @default(0)
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  itemKeranjang ItemKeranjang[]
+}
+
+model Order {
+  id         String   @id @unique @default(cuid())
   createdAt  DateTime @default(now())
   modifiedAt DateTime @default(now()) @updatedAt
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
-
-  order Order[]
-  total Float   @default(0)
 }
 
-model RiwayatOrder {
+// model RiwayatOrder {
 
-}
-
-model GambarProduk {
-  id         String   @id @unique @default(uuid())
-  createdAt  DateTime @default(now())
-  modifiedAt DateTime @default(now()) @updatedAt
-
-  gambar Bytes @db.ByteA
-
-  Produk   Produk @relation(fields: [produkId], references: [id])
-  produkId String
-}
-
-model GambarProfile {
-  id         String   @id @unique @default(uuid())
-  createdAt  DateTime @default(now())
-  modifiedAt DateTime @default(now()) @updatedAt
-
-  gambar Bytes @db.ByteA
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-}
+// }

@@ -1,12 +1,12 @@
 import prisma from "../db"
 
-// Tambah orderan
+// Tambah/edit item keranjang
 // Request:
-// - produkId: req.body.produk_id
+// - produkId: req.params.produkId
 // - kuantitas: req.body.kuantitas
 // Response:
-// - Data yang diorder
-export const createOrder = async (req, res, next) => {
+// - Data item yang ditambahkan/diedit
+export const createCartItem = async (req, res, next) => {
 	try {
 		const keranjang = await prisma.keranjang.findUnique({
 			where: {
@@ -18,41 +18,71 @@ export const createOrder = async (req, res, next) => {
 				id: req.params.produkId
 			}
 		})
-		const order = await prisma.order.upsert({
+		const item = await prisma.itemKeranjang.upsert({
 			where: {
 				produkId_keranjangId:{
 					produkId: produk.id,
 					keranjangId: keranjang.id
 				}
 			},
-			create: {
-				keranjangId: keranjang.id,
-				produkId: req.body.produk_id,
+			update: {
 				kuantitas: req.body.kuantitas,
 				subTotal: produk.harga * req.body.kuantitas
 			},
-			update: {
+			create: {
+				keranjangId: keranjang.id,
+				produkId: produk.id,
 				kuantitas: req.body.kuantitas,
 				subTotal: produk.harga * req.body.kuantitas
 			}
 		})
 
-		res.json({ data: order })
+		res.json({ data: item })
 	} catch (e) {
 		next(e)
 	}
 }
 
-export const deleteOrder = async (req, res, next) => {
+// Ambil data item keranjang
+// Request: None
+// Response: 
+// - Data item keranjang
+export const getCartItem = async (req, res, next) => {
 	try {
 		const keranjang = await prisma.keranjang.findUnique({
 			where: {
 				userId: req.user.id
 			}
 		})
-		const deleted = await prisma.order.delete({
+
+		const item = await prisma.itemKeranjang.findUnique({
 			where: {
-				produkId_keranjangId:{
+				produkId_keranjangId: {
+					produkId: req.params.produkId,
+					keranjangId: keranjang.id
+				}
+			}
+		})
+	} catch (e) {
+		next(e)
+	}
+}
+
+// Hapus item keranjang
+// Request:
+// - produkId: req.params.produkId
+// Response:
+// - Data item yang dihapus
+export const deleteCartItem = async (req, res, next) => {
+	try {
+		const keranjang = await prisma.keranjang.findUnique({
+			where: {
+				userId: req.user.id
+			}
+		})
+		const deleted = await prisma.itemKeranjang.delete({
+			where: {
+				produkId_keranjangId: {
 					produkId: req.params.produkId,
 					keranjangId: keranjang.id
 				}
@@ -65,28 +95,45 @@ export const deleteOrder = async (req, res, next) => {
 	}
 }
 
-export const getUserCart = async (req, res) => {
-	const keranjang = await prisma.keranjang.findUnique({
-		where: {
-			userId: req.user.id
-		},
-		include: {
-			order: true
-		}
-	})
+// Ambil data keranjang user
+// Request: None
+// Response: 
+// - Data keranjang beserta item di dalamnya
+export const getUserCart = async (req, res, next) => {
+	try {
+		const keranjang = await prisma.keranjang.findUnique({
+			where: {
+				userId: req.user.id
+			},
+			include: {
+				itemKeranjang: true
+			}
+		})
 
-	res.json({ data: keranjang })
+		res.json({ data: keranjang })
+	} catch (e) {
+		next(e)
+	}
 }
 
-export const updateCart = async (req, res) => {
-	const keranjang = await prisma.keranjang.update({
-		where: {
-			userId: req.user.id
-		},
-		data: {
-			total: req.body.total
-		}
-	})
+// Update data keranjang
+// Request: 
+// - total: req.body.total
+// Response:
+// - Data keranjang dengan total baru
+export const updateCart = async (req, res, next) => {
+	try {
+		const keranjang = await prisma.keranjang.update({
+			where: {
+				userId: req.user.id
+			},
+			data: {
+				total: req.body.total
+			}
+		})
 
-	res.json({ data: keranjang })
+		res.json({ data: keranjang })
+	} catch (e) {
+		next(e)
+	}
 }

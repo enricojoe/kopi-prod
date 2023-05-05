@@ -1,0 +1,10 @@
+terdapat 3 jenis akun
+Pembeli (R101)
+Toko (R101, R102)
+Koperasi (R101, R102, R103, R104)
+terdapat 4 jenis role
+R101 : Dapat membeli
+R102 : Dapat menjual
+R103 : Dapat bertransaksi dengan koperasi lain
+R104 : Dapat membuat akun toko
+
