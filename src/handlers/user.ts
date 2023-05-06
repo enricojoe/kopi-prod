@@ -1,5 +1,6 @@
 import prisma from '../db'
 import { hashPassword, comparePassword, createJWT } from "../modules/auth"
+import { uploadImage } from "../config"
 
 // Untuk membuat akun
 // Request: (note: req.body berarti dari form)
@@ -87,7 +88,7 @@ export const profile = async (req, res, next) => {
 
 // Update profile pengguna
 // Request:
-// - Username : req.user.username
+// - id : req.user.id
 // - namaLengkap : req.body.nama_lengkap
 // - noIndukKoperasi : req.body.no_induk_koperasi
 // Response:
@@ -95,6 +96,7 @@ export const profile = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
 	try {
 		if (req.file) {
+			const image = await uploadImage(req.file, "user")
 			const updateUser = await prisma.user.update({
 				where: {
 					id: req.user.id
@@ -102,7 +104,7 @@ export const updateProfile = async (req, res, next) => {
 				data: {
 					namaLengkap: req.body.nama_lengkap,
 					noIndukKoperasi: req.body.no_induk_koperasi,
-					gambar: req.file.path
+					gambar: image
 				}
 			})
 			res.json({ data: updateUser })
