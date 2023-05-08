@@ -22,7 +22,15 @@ export const createProduct = async (req, res, next) => {
 }
 
 export const getAllProducts = async (req, res) => {
-	const produk = await prisma.produk.findMany()
+	const produk = await prisma.produk.findMany({
+		include: {
+			user: {
+				select: {
+				  namaLengkap: true,
+				},
+			},
+		}
+	})
 
 	res.json({ data: produk })
 }
@@ -41,16 +49,30 @@ export const getUserProducts = async (req, res) => {
 }
 
 export const getProductById = async (req, res) => {
+
+	const alamat = await prisma.alamat.findUnique({
+		where: {
+			userId: req.user.id
+		},
+	})
+
 	const produk = await prisma.produk.findUnique({
 		where: {
 			id_userId: {		
 				id: req.params.produkId,
 				userId: req.user.id
 			}
+		},
+		include: {
+			user: {
+				select: {
+				  namaLengkap: true,
+				},
+			  },
 		}
 	})
 
-	res.json({ data: produk })
+	res.json({ data: produk, alamat: alamat})
 }
 
 export const updateProduct = async (req, res) => {

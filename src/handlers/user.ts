@@ -28,7 +28,8 @@ export const createNewUser = async (req, res, next) => {
 				password: await hashPassword(req.body.password),
 				namaLengkap: req.body.nama_lengkap,
 				noIndukKoperasi: req.body.no_induk_koperasi,
-				jenisAkun: req.body.jenis_akun 
+				jenisAkun: req.body.jenis_akun,
+				role: req.body.role
 			}
 		})
 		const token = createJWT(user)
@@ -78,7 +79,7 @@ export const profile = async (req, res, next) => {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
-				username: req.user.username
+				id: req.user.id
 			},
 			include: {
 				alamat: true
@@ -102,7 +103,7 @@ export const updateProfile = async (req, res, next) => {
 	try {
 		const updateUser = await prisma.user.update({
 			where: {
-				username: req.user.username
+				id: req.user.id
 			},
 			data: {
 				username: req.body.username,
