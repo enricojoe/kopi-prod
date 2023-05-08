@@ -120,7 +120,6 @@ export const updateProfile = async (req, res, next) => {
 			})
 			res.json({ data: updateUser })
 		}
-		
 	} catch (e) {
 		next(e)
 	}
