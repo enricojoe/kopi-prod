@@ -20,7 +20,6 @@ export const createProduct = async (req, res, next) => {
 		var link_gambar = []
 		await Promise.all(req.files.map(async file => {
 			const image = await uploadImage(file, "produk")
-			console.log(image)
 			link_gambar.push(image)
 		}))
 
@@ -58,7 +57,6 @@ export const createProduct = async (req, res, next) => {
 	
 		res.json({ data: produk })
 	} catch (e) {
-		console.log(e)
 		next(e)
 	}
 }
@@ -135,7 +133,6 @@ export const updateProduct = async (req, res, next) => {
 		var link_gambar = []
 		await Promise.all(req.files.map(async file => {
 			const image = await uploadImage(file, "produk")
-			console.log(image)
 			link_gambar.push(image)
 		}))
 

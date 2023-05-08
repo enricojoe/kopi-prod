@@ -30,7 +30,7 @@ model User {
   alamat    Alamat?
   Keranjang Keranjang?
   produk    Produk[]
-  Order     Order?
+  Order     Order[]
 }
 
 enum ROLES {
@@ -75,6 +75,7 @@ model Produk {
 
   itemKeranjang   ItemKeranjang[]
   kategori_produk ProdukKategori[]
+  ItemOrder       ItemOrder[]
 }
 
 model Kategori {
@@ -105,8 +106,8 @@ model ItemKeranjang {
   createdAt  DateTime @default(now())
   modifiedAt DateTime @default(now()) @updatedAt
 
-  kuantitas Int @default(0)
-  subTotal  Int @default(0)
+  kuantitas Int   @default(0)
+  subTotal  Float @default(0)
 
   produkId String
   produk   Produk @relation(fields: [produkId], references: [id])
@@ -130,6 +131,21 @@ model Keranjang {
   itemKeranjang ItemKeranjang[]
 }
 
+model ItemOrder {
+  id         String   @id @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  produkId String
+  produk   Produk @relation(fields: [produkId], references: [id])
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  kuantitas Int
+  subTotal  Float
+}
+
 model Order {
   id         String   @id @unique @default(cuid())
   createdAt  DateTime @default(now())
@@ -137,6 +153,18 @@ model Order {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
+
+  total     Float
+
+  status    STATUS_ORDER @default(MENUNGGU_PEMBAYARAN)
+  ItemOrder ItemOrder[]
+}
+
+enum STATUS_ORDER {
+  MENUNGGU_PEMBAYARAN
+  PESANAN_DIPROSES
+  PESANAN_DIKIRIM
+  DIBATALKAN
 }
 
 // model RiwayatOrder {
