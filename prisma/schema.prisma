@@ -143,7 +143,6 @@ model ItemOrder {
   order   Order  @relation(fields: [orderId], references: [id])
 
   kuantitas Int
-  subTotal  Float
 }
 
 model Order {
@@ -157,7 +156,7 @@ model Order {
   total     Float
 
   status    STATUS_ORDER @default(MENUNGGU_PEMBAYARAN)
-  ItemOrder ItemOrder[]
+  itemOrder ItemOrder[]
 }
 
 enum STATUS_ORDER {

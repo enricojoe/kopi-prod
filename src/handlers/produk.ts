@@ -113,12 +113,6 @@ export const getUserProducts = async (req, res, next) => {
 // - alamat toko
 export const getProductById = async (req, res, next) => {
 	try {
-		const alamat = await prisma.alamat.findUnique({
-			where: {
-				userId: req.user.id
-			},
-		})
-
 		const produk = await prisma.produk.findUnique({
 			where: {
 				id: req.params.produkId,
@@ -126,31 +120,12 @@ export const getProductById = async (req, res, next) => {
 			include: {
 				user: {
 					select: {
-					  namaLengkap: true
+					  namaLengkap: true,
+					  alamat: true
 					}
 				}
 			}
 		})
-		res.json({ data: produk, alamat: alamat })
-	} catch (e) {
-		next(e)
-	}
-
-}
-
-// Mengambil produk berdasarkan id produk
-// Request:
-// - id: req.params.produkId
-// Response:
-// - Data produk dengan id terkait
-export const getProductById = async (req, res, next) => {
-	try {
-		const produk = await prisma.produk.findUnique({
-			where: {
-				id: req.params.produkId
-			}
-		})
-
 		res.json({ data: produk })
 	} catch (e) {
 		next(e)
