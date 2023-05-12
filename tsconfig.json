@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node"],
     "sourceMap": true,
     "outDir": "dist",
     "lib": ["esnext"],

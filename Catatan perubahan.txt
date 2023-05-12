@@ -1,0 +1,3 @@
+- Yang disimpan dalam jwt hanya Id dan Role
+- saltRound dalam hashPassword dioper dari fungsi
+- hapus error type di user.ts createNewUser dan signIn

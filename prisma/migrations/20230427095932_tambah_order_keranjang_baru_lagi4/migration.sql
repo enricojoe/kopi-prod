@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Order" ALTER COLUMN "kuantitas" SET DEFAULT 0,
+ALTER COLUMN "subTotal" SET DEFAULT 0;

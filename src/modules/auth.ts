@@ -4,20 +4,17 @@ import dotenv  from "dotenv"
 
 dotenv.config()
 
-const saltRound = 1
-
 export const comparePassword = (password, hash) => {
   return bcrypt.compare(password, hash)
 }
 
-export const hashPassword = (password) => {
-  return bcrypt.hash(password, 1)
+export const hashPassword = (password, saltRound) => {
+  return bcrypt.hash(password, saltRound)
 }
 
 export const createJWT = (user) => {
   const token = jwt.sign({
-      id: user.id, 
-      username: user.username,
+      id: user.id,
       role: user.role
     }, 
     process.env.JWT_SECRET

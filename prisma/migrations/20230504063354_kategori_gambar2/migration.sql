@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Kategori" ALTER COLUMN "gambar" DROP NOT NULL,
+ALTER COLUMN "gambar" SET DATA TYPE TEXT;

@@ -1,0 +1,56 @@
+[
+    {
+        "username": "enricojoe",
+        "password": "passwordjoe",
+        "nama_lengkap": "Enrico Johanes",
+        "jenis_akun": "Pembeli"
+    },
+    {
+        "username": "bukansaya",
+        "password": "qwerty",
+        "nama_lengkap": "Grace Cecil",
+        "jenis_akun": "Koperasi"
+    },
+    {
+        "username": "superstar",
+        "password": "12341234",
+        "nama_lengkap": "Joko Widodo",
+        "jenis_akun": "Koperasi"
+    },
+    {
+        "username": "nandiadi",
+        "password": "qweqweqwe",
+        "nama_lengkap": "Nandi Adi",
+        "jenis_akun": "Pembeli"
+    },
+    {
+        "username": "rendyaja",
+        "password": "sayarendy",
+        "nama_lengkap": "Rendy Noor",
+        "jenis_akun": "Koperasi"
+    },
+    {
+        "username": "temansejati",
+        "password": "rahasia",
+        "nama_lengkap": "Hendra Setiawan",
+        "jenis_akun": "Koperasi"
+    },
+    {
+        "username": "hiddenplayer",
+        "password": "gorillabesar",
+        "nama_lengkap": "Hendri Andiro",
+        "jenis_akun": "Koperasi"
+    },
+    {
+        "username": "jarwoasli",
+        "password": "jarwoasli",
+        "nama_lengkap": "Jarwo Kwat",
+        "jenis_akun": "Pembeli"
+    },
+    {
+        "username": "pemainjago",
+        "password": "passwordku",
+        "nama_lengkap": "Amelia",
+        "jenis_akun": "Pembeli"
+    }
+]

@@ -1,110 +1,211 @@
 import prisma from "../db"
+import { uploadImage } from "../config"
 
+// ==Hanya untuk toko dan koperasi==
+// Untuk menambah produk
+// Request: 
+// - namaProduk: req.body.nama_produk
+// - deskripsi: req.body.deskripsi
+// - sku: req.body.sku
+// - harga: req.body.harga
+// - stok: req.body.stok
+// - gambar: req.files (form name = gambar_produk)
+// - userId: req.user.id
+// - kategori_produk: req.body.kategori_id (list of category id)
+// Response:
+// - Data product with category
 export const createProduct = async (req, res, next) => {
 	try {
+		// upload gambar
+		var link_gambar = []
+		await Promise.all(req.files.map(async file => {
+			const image = await uploadImage(file, "produk")
+			link_gambar.push(image)
+		}))
+
+		// kategori
+		const coba_json = JSON.parse(req.body.kategori_id)
+		var kategori = []
+		coba_json.forEach(id_kategori => {
+			let contoh_kategori = {
+				kategori:{
+					connect:{
+						id:id_kategori
+					}
+				}
+			}
+			kategori.push(contoh_kategori)
+		})
+
 		const produk = await prisma.produk.create({
 			data: {
 				namaProduk: req.body.nama_produk,
 				deskripsi: req.body.deskripsi,
 				sku: req.body.sku,
-				harga: req.body.harga,
-				kategori: req.body.kategori,
-				stok: req.body.stok,
-				userId: req.user.id
+				harga: parseFloat(req.body.harga),
+				stok: parseInt(req.body.stok),
+				gambar: link_gambar,
+				userId: req.user.id,
+				kategori_produk: {
+					create: kategori
+				}
+			},
+			include: {
+				kategori_produk: true
 			}
 		})
 	
 		res.json({ data: produk })
 	} catch (e) {
-		console.log(e)
 		next(e)
 	}
 }
 
-export const getAllProducts = async (req, res) => {
-	const produk = await prisma.produk.findMany({
-		include: {
-			user: {
-				select: {
-				  namaLengkap: true,
+// Mengambil semua data produk
+// Request: None
+// Response:
+// - Data semua produk
+export const getAllProducts = async (req, res, next) => {
+	try {
+		const produk = await prisma.produk.findMany({
+			include: {
+				user: {
+					select: {
+					  namaLengkap: true,
+					},
 				},
+			}
+		})
+		res.json({ data: produk })
+	} catch (e) {
+		next(e)
+	}
+}
+
+// Mengambil produk berdasarkan id user
+// Request:
+// - id: req.user.id
+// Response:
+// - Data produk milik user
+export const getUserProducts = async (req, res, next) => {
+	try {	
+		const user = await prisma.user.findUnique({
+			where: {
+				id: req.user.id
 			},
-		}
-	})
-
-	res.json({ data: produk })
-}
-
-export const getUserProducts = async (req, res) => {
-	const user = await prisma.user.findUnique({
-		where: {
-			id: req.user.id
-		},
-		include: {
-			produk: true
-		}
-	})
-
-	res.json({ data: user.produk })
-}
-
-export const getProductById = async (req, res) => {
-
-	const alamat = await prisma.alamat.findUnique({
-		where: {
-			userId: req.user.id
-		},
-	})
-
-	const produk = await prisma.produk.findUnique({
-		where: {
-			id_userId: {		
-				id: req.params.produkId,
-				userId: req.user.id
+			include: {
+				produk: true
 			}
-		},
-		include: {
-			user: {
-				select: {
-				  namaLengkap: true,
-				},
-			  },
-		}
-	})
+		})
 
-	res.json({ data: produk, alamat: alamat})
+		res.json({ data: user.produk })
+	} catch (e) {
+		next(e)
+	}
 }
 
-export const updateProduct = async (req, res) => {
-	const updated = await prisma.produk.update({
-		where: {
-			id_userId: {		
+// Mengambil data produk berdasarkan id produk
+// Request:
+// - id: req.user.id
+// - produk: req.params.produkId
+// Response:
+// - data produk
+// - alamat toko
+export const getProductById = async (req, res, next) => {
+	try {
+		const produk = await prisma.produk.findUnique({
+			where: {
 				id: req.params.produkId,
-				userId: req.user.id
+			},
+			include: {
+				user: {
+					select: {
+					  namaLengkap: true,
+					  alamat: true
+					}
+				}
 			}
-		},
-		data: {
-			namaProduk: req.body.nama_produk,
-			deskripsi: req.body.deskripsi,
-			sku: req.body.sku,
-			harga: req.body.harga,
-			kategori: req.body.kategori,
-			stok: req.body.stok
-		}
-	})
-
-	res.json({ data: updated })
+		})
+		res.json({ data: produk })
+	} catch (e) {
+		next(e)
+	}
 }
 
-export const deleteProduct = async (req, res) => {
-	const deleted = await prisma.produk.delete({
-		where: {
-			id_userId: {
-				id: req.params.produkId,
-				userId: req.user.id
-			}
-		}
-	})
+// Update data produk berdasarkan id produk
+// Request:
+// - id: req.params.produkId
+// - namaProduk: req.body.nama_produk
+// - sku: req.body.sku
+// - harga: req.body.harga
+// - stok: req.body.stok
+// - gambar: req.files (form name "gambar_produk")
+// - kategori_produk: req.body.kategori_id (list of category id)
+// Response:
+// - Data produk yang dihapus
+export const updateProduct = async (req, res, next) => {
+	try {
+		// upload gambar
+		var link_gambar = []
+		await Promise.all(req.files.map(async file => {
+			const image = await uploadImage(file, "produk")
+			link_gambar.push(image)
+		}))
 
-	res.json({ data: deleted })
+		// kategori
+		const coba_json = JSON.parse(req.body.kategori_id)
+		var kategori = []
+		coba_json.forEach(id_kategori => {
+			let contoh_kategori = {
+				kategori:{
+					connect:{
+						id:id_kategori
+					}
+				}
+			}
+			kategori.push(contoh_kategori)
+		})
+
+		const id_kategori = req.body.kategori_id.map(id => { id })
+		const updated = await prisma.produk.update({
+			where: {
+				id: req.params.produkId
+			},
+			data: {
+				namaProduk: req.body.nama_produk,
+				deskripsi: req.body.deskripsi,
+				sku: req.body.sku,
+				harga: parseFloat(req.body.harga),
+				stok: parseInt(req.body.stok),
+				gambar: link_gambar,
+				kategori_produk: {
+					create: kategori
+				}
+
+			}
+		})
+
+		res.json({ data: updated })
+	} catch (e) {
+		next(e)
+	}
+}
+
+// Menghapus produk
+// Request:
+// - id: req.params.produkId
+// Response:
+// - Data produk yang dihapus
+export const deleteProduct = async (req, res, next) => {
+	try {
+		const deleted = await prisma.produk.delete({
+			where: {
+				id: req.params.produkId
+			}
+		})
+
+		res.json({ data: deleted })
+	} catch (e) {
+		next(e)
+	}
 }
