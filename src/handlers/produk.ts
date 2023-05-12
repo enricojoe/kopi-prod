@@ -63,13 +63,21 @@ export const createProduct = async (req, res, next) => {
 	}
 }
 
-// Mengambil semua data produk
-// Request: None
-// Response:
-// - Data semua produk
+// Mengambil semua produk yang tersedia
+// Request: NONE
+// Response: 
+// - Data semua produk yang tersedia
 export const getAllProducts = async (req, res, next) => {
 	try {
-		const produk = await prisma.produk.findMany()
+		const produk = await prisma.produk.findMany({
+			include: {
+				user: {
+					select: {
+						namaLengkap: true,
+					},
+				},
+			}
+		})
 
 		res.json({ data: produk })
 	} catch (e) {
@@ -77,16 +85,16 @@ export const getAllProducts = async (req, res, next) => {
 	}
 }
 
-// Mengambil produk berdasarkan id user
+// Mengambil produk berdasarkan id user (toko/koperasi)
 // Request:
-// - id: req.user.id
+// - id (user id): req.params.userId
 // Response:
-// - Data produk milik user
+// - Data user beserta produknya
 export const getUserProducts = async (req, res, next) => {
-	try {	
+	try {
 		const user = await prisma.user.findUnique({
 			where: {
-				id: req.user.id
+				id: req.params.userId
 			},
 			include: {
 				produk: true
@@ -109,6 +117,14 @@ export const getProductById = async (req, res, next) => {
 		const produk = await prisma.produk.findUnique({
 			where: {
 				id: req.params.produkId
+			},
+			include: {
+				user: {
+					select: {
+						namaLengkap: true,
+						alamat: true
+					},
+				},
 			}
 		})
 
@@ -117,6 +133,7 @@ export const getProductById = async (req, res, next) => {
 		next(e)
 	}
 }
+
 
 // Update data produk berdasarkan id produk
 // Request:
