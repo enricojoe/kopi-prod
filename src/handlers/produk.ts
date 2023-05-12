@@ -20,7 +20,6 @@ export const createProduct = async (req, res, next) => {
 		var link_gambar = []
 		await Promise.all(req.files.map(async file => {
 			const image = await uploadImage(file, "produk")
-			console.log(image)
 			link_gambar.push(image)
 		}))
 
@@ -58,7 +57,6 @@ export const createProduct = async (req, res, next) => {
 	
 		res.json({ data: produk })
 	} catch (e) {
-		console.log(e)
 		next(e)
 	}
 }
@@ -78,7 +76,6 @@ export const getAllProducts = async (req, res, next) => {
 				},
 			}
 		})
-
 		res.json({ data: produk })
 	} catch (e) {
 		next(e)
@@ -107,16 +104,18 @@ export const getUserProducts = async (req, res, next) => {
 	}
 }
 
-// Mengambil produk berdasarkan id produk
+// Mengambil data produk berdasarkan id produk
 // Request:
-// - id: req.params.produkId
+// - id: req.user.id
+// - produk: req.params.produkId
 // Response:
-// - Data produk dengan id terkait
+// - data produk
+// - alamat toko
 export const getProductById = async (req, res, next) => {
 	try {
 		const produk = await prisma.produk.findUnique({
 			where: {
-				id: req.params.produkId
+				id: req.params.produkId,
 			},
 			include: {
 				user: {
@@ -127,7 +126,6 @@ export const getProductById = async (req, res, next) => {
 				},
 			}
 		})
-
 		res.json({ data: produk })
 	} catch (e) {
 		next(e)
@@ -152,7 +150,6 @@ export const updateProduct = async (req, res, next) => {
 		var link_gambar = []
 		await Promise.all(req.files.map(async file => {
 			const image = await uploadImage(file, "produk")
-			console.log(image)
 			link_gambar.push(image)
 		}))
 
