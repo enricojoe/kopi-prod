@@ -121,7 +121,8 @@ export const getProductById = async (req, res, next) => {
 				user: {
 					select: {
 						namaLengkap: true,
-						alamat: true
+						alamat: true,
+						gambar:true,
 					},
 				},
 			}
