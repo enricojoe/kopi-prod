@@ -33,10 +33,12 @@ cloudinary.config({
 });
 
 export const uploadImage = async (file, folder) => {
-	const extName = path.extname(file.originalname).toString()
-	let file64 = parser.format(extName, file.buffer)
+
+	// const extName = path.extname(file.originalname).toString()
+	// let file64 = parser.format(extName, file.buffer)
+
 	const result = await cloudinary.uploader.upload(
-		file64.content,
+		file,
 		{
 			folder: folder,
 			public_id: `${folder}-${Date.now()}-${Math.round(Math.random() * 1e3)}`,

@@ -1,6 +1,6 @@
-import prisma from '../db'
-import { hashPassword, comparePassword, createJWT } from "../modules/auth"
-import { uploadImage } from "../config"
+import prisma from "../db";
+import { hashPassword, comparePassword, createJWT } from "../modules/auth";
+import { uploadImage } from "../config";
 
 // Untuk membuat akun
 // Request: (note: req.body berarti dari form)
@@ -32,12 +32,11 @@ export const createNewUser = async (req, res, next) => {
 			}
 		})
 
-		const keranjang = await prisma.keranjang.create({
-			data: {
-				userId: user.id
-			}
-		})
-
+    const keranjang = await prisma.keranjang.create({
+    	data: {
+        	userId: user.id,
+    	},
+    });
 		const token = createJWT(user)
 		
 		res.status(200).json({ token })
@@ -46,7 +45,8 @@ export const createNewUser = async (req, res, next) => {
 	}
 }
 
-// Untuk masuk 
+
+// Untuk masuk
 // Request:
 // - Username : req.body.username
 // - Password : req.body.password
@@ -69,12 +69,19 @@ export const signIn = async (req, res, next) => {
 			throw new Error( "password" );
 		}
 
-		const token = createJWT(user)
-		res.json({ token, user })
-	} catch (e) {
-		next(e)
-	}
-}
+    const isValid = await comparePassword(req.body.password, user.password);
+    if (!isValid) {
+      res.status(401);
+      res.json({ message: "Password Salah" });
+      return;
+    }
+
+    const token = createJWT(user);
+    res.json({ token, user });
+  } catch (e) {
+    next(e);
+  }
+};
 
 // Dapetin profil pengguna
 // Request:
@@ -82,21 +89,21 @@ export const signIn = async (req, res, next) => {
 // Response:
 // - Data user + Alamat
 export const profile = async (req, res, next) => {
-	try {
-		const user = await prisma.user.findUnique({
-			where: {
-				id: req.user.id
-			},
-			include: {
-				alamat: true
-			}
-		})
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+      include: {
+        alamat: true,
+      },
+    });
 
-		res.json({ data: user })
-	} catch (e) {
-		next(e)
-	}
-}
+    res.json({ data: user });
+  } catch (e) {
+    next(e);
+  }
+};
 
 // Update profile pengguna
 // Request:
@@ -106,36 +113,38 @@ export const profile = async (req, res, next) => {
 // Response:
 // - Data user yang sudah diupdate
 export const updateProfile = async (req, res, next) => {
-	try {
-		if (req.file) {
-			const image = await uploadImage(req.file, "user")
-			const updateUser = await prisma.user.update({
-				where: {
-					id: req.user.id
-				},
-				data: {
-					namaLengkap: req.body.nama_lengkap,
-					noIndukKoperasi: req.body.no_induk_koperasi,
-					gambar: image
-				}
-			})
-			res.json({ data: updateUser })
-		} else {
-			const updateUser = await prisma.user.update({
-				where: {
-					id: req.user.id
-				},
-				data: {
-					namaLengkap: req.body.nama_lengkap,
-					noIndukKoperasi: req.body.no_induk_koperasi
-				}
-			})
-			res.json({ data: updateUser })
-		}
-	} catch (e) {
-		next(e)
-	}
-}
+
+  try {
+  	if (req.body.gambar != "undefined") {
+
+  		const image = await uploadImage(req.body.gambar, "user")
+  		const updateUser = await prisma.user.update({
+  			where: {
+  				id: req.user.id
+  			},
+  			data: {
+  				namaLengkap: req.body.nama_lengkap,
+  				noIndukKoperasi: req.body.no_induk_koperasi,
+  				gambar: image
+  			}
+  		})
+  		res.json({ data: updateUser })
+  	} else {
+  		const updateUser = await prisma.user.update({
+  			where: {
+  				id: req.user.id
+  			},
+  			data: {
+  				namaLengkap: req.body.nama_lengkap,
+  				noIndukKoperasi: req.body.no_induk_koperasi
+  			}
+  		})
+  		res.json({ data: updateUser })
+  	}
+  } catch (e) {
+  	next(e)
+  }
+};
 
 // Tambah (jika belum ada), update (jika sudah ada) data alamat
 // Request:
@@ -149,33 +158,33 @@ export const updateProfile = async (req, res, next) => {
 // Response:
 // - Data user dengan alamat yang sudah dibuat/update
 export const updateAlamat = async (req, res, next) => {
-	try {
-		const createAlamat = await prisma.alamat.upsert({
-			where: {
-				userId: req.user.id
-			},
-			create: {
-				provinsi: req.body.provinsi,
-				kabupaten: req.body.kabupaten,
-				kecamatan: req.body.kecamatan,
-				kodePos: req.body.kode_post,
-				detailAlamat: req.body.detail_alamat,
-				latitude: req.body.latitude,
-				longitude: req.body.longitude,
-				userId: req.user.id
-			},
-			update: {
-				provinsi: req.body.provinsi,
-				kabupaten: req.body.kabupaten,
-				kecamatan: req.body.kecamatan,
-				kodePos: req.body.kode_post,
-				detailAlamat: req.body.detail_alamat,
-				latitude: req.body.latitude,
-				longitude: req.body.longitude,
-			}
-		})
-		res.json({ data: createAlamat })
-	} catch (e) {
-		next(e)
-	}
-}
+  try {
+    const createAlamat = await prisma.alamat.upsert({
+      where: {
+        userId: req.user.id,
+      },
+      create: {
+        provinsi: req.body.provinsi,
+        kabupaten: req.body.kabupaten,
+        kecamatan: req.body.kecamatan,
+        kodePos: req.body.kode_post,
+        detailAlamat: req.body.detail_alamat,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+        userId: req.user.id,
+      },
+      update: {
+        provinsi: req.body.provinsi,
+        kabupaten: req.body.kabupaten,
+        kecamatan: req.body.kecamatan,
+        kodePos: req.body.kode_post,
+        detailAlamat: req.body.detail_alamat,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
+      },
+    });
+    res.json({ data: createAlamat });
+  } catch (e) {
+    next(e);
+  }
+};
