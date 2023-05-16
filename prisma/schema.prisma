@@ -24,6 +24,7 @@ model User {
   jenisAkun       String
   noIndukKoperasi String?
   gambar          String?
+  deskripsi String?
   role            ROLES[]  @default([R101])
   active          Boolean? @default(true)
 

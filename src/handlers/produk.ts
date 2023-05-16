@@ -16,17 +16,10 @@ import { uploadImage } from "../config"
 // - Data product with category
 export const createProduct = async (req, res, next) => {
 	try {
-		// upload gambar
-		var link_gambar = []
-		await Promise.all(req.files.map(async file => {
-			const image = await uploadImage(file, "produk")
-			link_gambar.push(image)
-		}))
-
 		// kategori
-		const coba_json = JSON.parse(req.body.kategori_id)
+		const kategori_json = JSON.parse(req.body.kategori_id)
 		var kategori = []
-		coba_json.forEach(id_kategori => {
+		kategori_json.forEach(id_kategori => {
 			let contoh_kategori = {
 				kategori:{
 					connect:{
@@ -37,6 +30,8 @@ export const createProduct = async (req, res, next) => {
 			kategori.push(contoh_kategori)
 		})
 
+		const image = await uploadImage(req.file, "produk")
+
 		const produk = await prisma.produk.create({
 			data: {
 				namaProduk: req.body.nama_produk,
@@ -44,7 +39,7 @@ export const createProduct = async (req, res, next) => {
 				sku: req.body.sku,
 				harga: parseFloat(req.body.harga),
 				stok: parseInt(req.body.stok),
-				gambar: link_gambar,
+				gambar: image,
 				userId: req.user.id,
 				kategori_produk: {
 					create: kategori
@@ -89,9 +84,10 @@ export const getAllProducts = async (req, res, next) => {
 // - Data user beserta produknya
 export const getUserProducts = async (req, res, next) => {
 	try {
+		console.log(req.params.tokoId)
 		const user = await prisma.user.findUnique({
 			where: {
-				id: req.params.userId
+				id: req.params.tokoId
 			},
 			include: {
 				produk: true
@@ -146,13 +142,6 @@ export const getProductById = async (req, res, next) => {
 // - Data produk yang dihapus
 export const updateProduct = async (req, res, next) => {
 	try {
-		// upload gambar
-		var link_gambar = []
-		await Promise.all(req.files.map(async file => {
-			const image = await uploadImage(file, "produk")
-			link_gambar.push(image)
-		}))
-
 		// kategori
 		const coba_json = JSON.parse(req.body.kategori_id)
 		var kategori = []
@@ -168,6 +157,9 @@ export const updateProduct = async (req, res, next) => {
 		})
 
 		const id_kategori = req.body.kategori_id.map(id => { id })
+	
+		const image = await uploadImage(req.file, "produk")
+
 		const updated = await prisma.produk.update({
 			where: {
 				id: req.params.produkId
@@ -178,7 +170,7 @@ export const updateProduct = async (req, res, next) => {
 				sku: req.body.sku,
 				harga: parseFloat(req.body.harga),
 				stok: parseInt(req.body.stok),
-				gambar: link_gambar,
+				gambar: image,
 				kategori_produk: {
 					create: kategori
 				}

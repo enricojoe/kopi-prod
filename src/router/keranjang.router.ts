@@ -5,7 +5,7 @@ import { loggedOn } from "../modules/auth"
 const keranjang_router = Router()
 
 keranjang_router.get("/", loggedOn, getUserCart)
-keranjang_router.patch("/update-keranjang", loggedOn, updateCart)
+keranjang_router.patch("/:produkId", loggedOn, updateCart)
 keranjang_router.post("/:produkId", loggedOn, createCartItem)
 keranjang_router.delete("/:produkId", loggedOn, deleteCartItem)
 

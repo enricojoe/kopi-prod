@@ -1,3 +1,25 @@
 - Yang disimpan dalam jwt hanya Id dan Role
 - saltRound dalam hashPassword dioper dari fungsi
 - hapus error type di user.ts createNewUser dan signIn
+
+- Gambar produk sementara hanya 1 yang digunakan
+// upload gambar
+var link_gambar = []
+await Promise.all(req.files.map(async file => {
+	const image = await uploadImage(file, "produk")
+	link_gambar.push(image)
+}))
+
+// kategori
+const coba_json = JSON.parse(req.body.kategori_id)
+var kategori = []
+coba_json.forEach(id_kategori => {
+	let contoh_kategori = {
+		kategori:{
+			connect:{
+				id:id_kategori
+			}
+		}
+	}
+	kategori.push(contoh_kategori)
+})

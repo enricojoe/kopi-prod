@@ -12,13 +12,23 @@ import { uploadImage } from "../config"
 // - Token JWT
 export const createNewUser = async (req, res, next) => {
 	try {
+		let role = []
+		if (req.body.jenis_akun === "Pembeli") {
+			role.push("R101")
+		} else if (req.body.jenis_akun === "Toko") {
+			role.push("R101", "R102")
+		} else if (req.body.jenis_akun === "Koperasi") {
+			role.push("R101", "R102", "R103", "R104")
+		}
+
 		const user = await prisma.user.create({
 			data: {
 				username: req.body.username,
 				password: await hashPassword(req.body.password, 1),
 				namaLengkap: req.body.nama_lengkap,
 				noIndukKoperasi: req.body.no_induk_koperasi,
-				jenisAkun: req.body.jenis_akun
+				jenisAkun: req.body.jenis_akun,
+				role: role
 			}
 		})
 
@@ -29,7 +39,8 @@ export const createNewUser = async (req, res, next) => {
 		})
 
 		const token = createJWT(user)
-		res.json({ token })
+		
+		res.status(200).json({ token })
 	} catch (e) {
 		next(e)
 	}
@@ -49,12 +60,13 @@ export const signIn = async (req, res, next) => {
 				username: req.body.username
 			}
 		})
+		if (!user) {
+			throw new Error( "username" )
+		}
 		
 		const isValid = await comparePassword(req.body.password, user.password)
 		if (!isValid) {
-			res.status(401)
-			res.json({message: "Password Salah"})
-			return
+			throw new Error( "password" );
 		}
 
 		const token = createJWT(user)

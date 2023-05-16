@@ -106,7 +106,11 @@ export const getUserCart = async (req, res, next) => {
 				userId: req.user.id
 			},
 			include: {
-				itemKeranjang: true
+				itemKeranjang: {
+					include: {
+						produk: true
+					}
+				}
 			}
 		})
 
