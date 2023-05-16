@@ -24,7 +24,7 @@ model User {
   jenisAkun       String
   noIndukKoperasi String?
   gambar          String?
-  deskripsi String?
+  deskripsi       String?
   role            ROLES[]  @default([R101])
   active          Boolean? @default(true)
 
@@ -154,7 +154,7 @@ model Order {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
 
-  total     Float
+  total Float
 
   status    STATUS_ORDER @default(MENUNGGU_PEMBAYARAN)
   itemOrder ItemOrder[]

@@ -69,15 +69,8 @@ export const signIn = async (req, res, next) => {
 			throw new Error( "password" );
 		}
 
-    const isValid = await comparePassword(req.body.password, user.password);
-    if (!isValid) {
-      res.status(401);
-      res.json({ message: "Password Salah" });
-      return;
-    }
-
-    const token = createJWT(user);
-    res.json({ token, user });
+	    const token = createJWT(user);
+	    res.json({ token, user });
   } catch (e) {
     next(e);
   }
@@ -188,3 +181,20 @@ export const updateAlamat = async (req, res, next) => {
     next(e);
   }
 };
+
+export const merchant = async (req, res, next) => {
+	try {
+		const produk = await prisma.user.findUnique({
+			where: {
+				id: req.user.id
+			},
+			select: {
+				produk: true
+			}
+		})
+
+		res.status(200).json({ data: produk })
+	} catch (e) {
+		next(e)
+	}
+}
