@@ -8,3 +8,10 @@ R102 : Dapat menjual
 R103 : Dapat bertransaksi dengan koperasi lain
 R104 : Dapat membuat akun toko
 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaGthMGh5ZzAwMDB6cGx3dnJ6d2t6MjMiLCJyb2xlIjpbIlIxMDEiXSwiaWF0IjoxNjgzODg5NTE2fQ.KX4jfG2knNdlFbs4CATVI9j9-gErUEVx1nv8f-sWRdg
+Bukan Enrico
+Koperasi
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsaGtpY3dkYTAwMDA0aHVvbzd0dG92ZzMiLCJyb2xlIjpbIlIxMDIiXSwiaWF0IjoxNjg0MTE3MDU5fQ.z-p2-k3r9xOfxfYKeQvztwLkKH7rjPeit4AY50aWOr4
+Kevin tanuwijaya
+Koperasi

@@ -95,9 +95,9 @@ model Kategori {
 model ProdukKategori {
   createdAt DateTime @default(now())
 
-  produk     Produk   @relation(fields: [produkId], references: [id])
+  produk     Produk   @relation(fields: [produkId], references: [id], onDelete: Cascade)
   produkId   String
-  kategori   Kategori @relation(fields: [kategoriId], references: [id])
+  kategori   Kategori @relation(fields: [kategoriId], references: [id], onDelete: Cascade)
   kategoriId String
 
   @@id([produkId, kategoriId])
@@ -111,7 +111,7 @@ model ItemKeranjang {
   subTotal  Float @default(0)
 
   produkId String
-  produk   Produk @relation(fields: [produkId], references: [id])
+  produk   Produk @relation(fields: [produkId], references: [id], onDelete: Cascade)
 
   Keranjang   Keranjang @relation(fields: [keranjangId], references: [id])
   keranjangId String
@@ -138,7 +138,7 @@ model ItemOrder {
   modifiedAt DateTime @default(now()) @updatedAt
 
   produkId String
-  produk   Produk @relation(fields: [produkId], references: [id])
+  produk   Produk @relation(fields: [produkId], references: [id], onDelete: NoAction)
 
   orderId String
   order   Order  @relation(fields: [orderId], references: [id])
