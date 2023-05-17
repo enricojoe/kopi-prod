@@ -95,9 +95,9 @@ model Kategori {
 model ProdukKategori {
   createdAt DateTime @default(now())
 
-  produk     Produk   @relation(fields: [produkId], references: [id], onDelete: Cascade)
+  produk     Produk   @relation(fields: [produkId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   produkId   String
-  kategori   Kategori @relation(fields: [kategoriId], references: [id], onDelete: Cascade)
+  kategori   Kategori @relation(fields: [kategoriId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kategoriId String
 
   @@id([produkId, kategoriId])

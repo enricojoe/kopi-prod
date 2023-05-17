@@ -89,7 +89,6 @@ export const getAllProducts = async (req, res, next) => {
 // - Data user beserta produknya
 export const getUserProducts = async (req, res, next) => {
 	try {
-		console.log(req.params.tokoId)
 		const user = await prisma.user.findUnique({
 			where: {
 				id: req.params.tokoId
@@ -99,7 +98,7 @@ export const getUserProducts = async (req, res, next) => {
 			}
 		})
 
-		res.json({ data: user.produk })
+		res.json({ data: user })
 	} catch (e) {
 		next(e)
 	}
@@ -161,6 +160,12 @@ export const updateProduct = async (req, res, next) => {
 			image = await uploadImage(req.body.gambar_produk, "produk")
 		}
 
+		const hapus_kategori = await prisma.produkKategori.deleteMany({
+			where: {
+				produkId: req.params.produkId
+			}
+		})
+
 		// kategori
 		var kategori = []
 		if ( req.body.kategori_id !== undefined ){
@@ -175,8 +180,6 @@ export const updateProduct = async (req, res, next) => {
 				}
 				kategori.push(contoh_kategori)
 			})
-	
-			const id_kategori = req.body.kategori_id.map(id => { id })
 		}
 	
 
@@ -194,7 +197,13 @@ export const updateProduct = async (req, res, next) => {
 				kategori_produk: {
 					create: kategori
 				}
-
+			}, 
+			include: {
+				kategori_produk: {
+					select: {
+						kategori: true
+					}
+				}
 			}
 		})
 
