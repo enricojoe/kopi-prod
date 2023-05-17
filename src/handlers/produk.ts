@@ -105,7 +105,7 @@ export const getUserProducts = async (req, res, next) => {
 	}
 }
 
-// Mengambil data produk berdasarkan id produk
+// Mengamzbil data produk berdasarkan id produk
 // Request:
 // - id: req.user.id
 // - produk: req.params.produkId
