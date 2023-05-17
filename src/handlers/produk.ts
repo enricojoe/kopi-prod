@@ -153,23 +153,32 @@ export const getProductById = async (req, res, next) => {
 // - Data produk yang dihapus
 export const updateProduct = async (req, res, next) => {
 	try {
+
+		// gambar
+		var image = undefined
+		if ( req.body.gambar_produk !== undefined ){
+			console.log(req.body.gambar_produk)
+			image = await uploadImage(req.body.gambar_produk, "produk")
+		}
+
 		// kategori
-		const coba_json = JSON.parse(req.body.kategori_id)
 		var kategori = []
-		coba_json.forEach(id_kategori => {
-			let contoh_kategori = {
-				kategori:{
-					connect:{
-						id:id_kategori
+		if ( req.body.kategori_id !== undefined ){
+			const coba_json = JSON.parse(req.body.kategori_id)
+			coba_json.forEach(id_kategori => {
+				let contoh_kategori = {
+					kategori:{
+						connect:{
+							id:id_kategori
+						}
 					}
 				}
-			}
-			kategori.push(contoh_kategori)
-		})
-
-		const id_kategori = req.body.kategori_id.map(id => { id })
+				kategori.push(contoh_kategori)
+			})
 	
-		const image = await uploadImage(req.body.gambar_produk, "produk")
+			const id_kategori = req.body.kategori_id.map(id => { id })
+		}
+	
 
 		const updated = await prisma.produk.update({
 			where: {

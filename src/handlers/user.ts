@@ -108,33 +108,23 @@ export const profile = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
 
   try {
-  	if (req.body.gambar != "undefined") {
+  	var image = undefined
 
-  		const image = await uploadImage(req.body.gambar, "user")
-  		const updateUser = await prisma.user.update({
-  			where: {
-  				id: req.user.id
-  			},
-  			data: {
-  				namaLengkap: req.body.nama_lengkap,
-  				noIndukKoperasi: req.body.no_induk_koperasi,
-  				gambar: image
-  			}
-  		})
-  		console.log(updateUser)
-  		res.json({ data: updateUser })
-  	} else {
-  		const updateUser = await prisma.user.update({
-  			where: {
-  				id: req.user.id
-  			},
-  			data: {
-  				namaLengkap: req.body.nama_lengkap,
-  				noIndukKoperasi: req.body.no_induk_koperasi
-  			}
-  		})
-  		res.json({ data: updateUser })
+  	if ( req.body.gambar !== undefined ) {
+  		image = await uploadImage(req.body.gambar, "user")
   	}
+
+	const updateUser = await prisma.user.update({
+		where: {
+			id: req.user.id
+		},
+		data: {
+			namaLengkap: req.body.nama_lengkap,
+			noIndukKoperasi: req.body.no_induk_koperasi,
+			gambar: image
+		}
+	})
+	res.json({ data: updateUser })
   } catch (e) {
   	next(e)
   }
