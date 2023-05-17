@@ -121,6 +121,7 @@ export const updateProfile = async (req, res, next) => {
   				gambar: image
   			}
   		})
+  		console.log(updateUser)
   		res.json({ data: updateUser })
   	} else {
   		const updateUser = await prisma.user.update({

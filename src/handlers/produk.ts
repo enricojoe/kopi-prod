@@ -30,7 +30,7 @@ export const createProduct = async (req, res, next) => {
 			kategori.push(contoh_kategori)
 		})
 
-		const image = await uploadImage(req.file, "produk")
+		const image = await uploadImage(req.body.gambar_produk, "produk")
 
 		const produk = await prisma.produk.create({
 			data: {
@@ -69,6 +69,11 @@ export const getAllProducts = async (req, res, next) => {
 						namaLengkap: true,
 					},
 				},
+				kategori_produk: {
+					select: {
+						kategori: true
+					}
+				}
 			}
 		})
 		res.json({ data: produk })
@@ -121,6 +126,11 @@ export const getProductById = async (req, res, next) => {
 						gambar:true,
 					},
 				},
+				kategori_produk: {
+					select: {
+						kategori: true
+					}
+				}
 			}
 		})
 		res.json({ data: produk })
@@ -159,7 +169,7 @@ export const updateProduct = async (req, res, next) => {
 
 		const id_kategori = req.body.kategori_id.map(id => { id })
 	
-		const image = await uploadImage(req.file, "produk")
+		const image = await uploadImage(req.body.gambar_produk, "produk")
 
 		const updated = await prisma.produk.update({
 			where: {

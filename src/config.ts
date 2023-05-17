@@ -33,7 +33,6 @@ cloudinary.config({
 });
 
 export const uploadImage = async (file, folder) => {
-
 	// const extName = path.extname(file.originalname).toString()
 	// let file64 = parser.format(extName, file.buffer)
 
