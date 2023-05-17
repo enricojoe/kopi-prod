@@ -43,7 +43,8 @@ export const createProduct = async (req, res, next) => {
 				userId: req.user.id,
 				kategori_produk: {
 					create: kategori
-				}
+				},
+				terjual: 0 //default
 			},
 			include: {
 				kategori_produk: true
@@ -152,6 +153,7 @@ export const getProductById = async (req, res, next) => {
 // Response:
 // - Data produk yang dihapus
 export const updateProduct = async (req, res, next) => {
+
 	try {
 		// kategori
 		const coba_json = JSON.parse(req.body.kategori_id)
@@ -167,26 +169,41 @@ export const updateProduct = async (req, res, next) => {
 			kategori.push(contoh_kategori)
 		})
 
-		const id_kategori = req.body.kategori_id.map(id => { id })
-	
-		const image = await uploadImage(req.body.gambar_produk, "produk")
+		// const id_kategori = req.body.kategori_id.map(id => { id })
 
-		const updated = await prisma.produk.update({
-			where: {
-				id: req.params.produkId
-			},
-			data: {
+		// DONT UPDATE IMAGE IF THERE IS NO IMAGE
+		var data = {}
+		if(req.body.gambar == "undefined"){
+			data = {
 				namaProduk: req.body.nama_produk,
 				deskripsi: req.body.deskripsi,
 				sku: req.body.sku,
 				harga: parseFloat(req.body.harga),
 				stok: parseInt(req.body.stok),
-				gambar: image,
 				kategori_produk: {
 					create: kategori
 				}
-
-			}
+			} 
+		} else {
+			const image = await uploadImage(req.body.gambar_produk, "produk")
+			data = {
+			   namaProduk: req.body.nama_produk,
+			   deskripsi: req.body.deskripsi,
+			   sku: req.body.sku,
+			   harga: parseFloat(req.body.harga),
+			   stok: parseInt(req.body.stok),
+			   gambar: image,
+			   kategori_produk: {
+				   create: kategori
+			   }
+		   }
+		}
+	
+		const updated = await prisma.produk.update({
+			where: {
+				id: req.params.produkId
+			},
+			data: data
 		})
 
 		res.json({ data: updated })
