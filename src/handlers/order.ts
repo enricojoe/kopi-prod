@@ -6,8 +6,6 @@ import prisma from "../db"
 
 export const createOrder = async (req, res, next) => {
 	try {
-		console.log(req.body)
-		// const item_keranjang_json = req.body.item_keranjang
 		const item_keranjang_json = JSON.parse(req.body.item_keranjang)
 		var item_order = []
 		var total = 0
@@ -39,31 +37,108 @@ export const createOrder = async (req, res, next) => {
 	}
 }
 
-export const instantBuy = async (req, res, next) => {
+// export const createOrder = async (req, res, next) => {
+// 	try {
+// 		const item_keranjang = JSON.parse(req.body.id_produk_keranjang)
+// 		var item_order = []
+// 		var total = 0
+
+// 		// const order_item_keranjang = await prisma.user.findUnique({
+// 		// 	where: {
+// 		// 		id: req.user.id
+// 		// 	},
+// 		// 	select: {
+// 		// 		Keranjang: {
+// 		// 			select: {
+// 		// 				itemKeranjang: {
+// 		// 					where: {
+// 		// 						produkId: item_keranjang[0]
+// 		// 					}
+// 		// 				}
+// 		// 			}
+// 		// 		}
+// 		// 	}
+// 		// })
+
+// 		const order_item_keranjang = await prisma.itemKeranjang.findMany({
+// 			where: {
+// 				Keranjang: {
+// 					userId: req.user.id
+// 				},
+// 				produkId: item_keranjang
+// 			}
+// 		})
+
+// 		res.status(200).json({ data: order_item_keranjang })
+
+// 	} catch (e) {
+// 		next(e)
+// 	}
+// }
+
+export const getUserOrder = async (req, res, next) => {
 	try {
-		const produk = await prisma.produk.findUnique({
+		const order = await prisma.user.findUnique({
 			where: {
-				id: req.params.produkId
+				id: req.user.id
+			},
+			select: {
+				Order: true
 			}
 		})
-		const order = await prisma.order.create({
-			data: {
-				userId: req.user.id,
-				total: parseInt(req.body.kuantitas) * produk.harga,
-				itemOrder: {
-					create: {
-						produkId: produk.id,
-						kuantitas: parseInt(req.body.kuantitas)
+
+		res.status(200).json({ data: order })
+	} catch (e) {
+		next(e)
+	}
+}
+
+export const getPeopleOrder = async (req, res, next) => {
+	try {
+		const orderan = await prisma.user.findUnique({
+			where: {
+				id: req.user.id
+			},
+			select: {
+				produk: {
+					include: {
+						ItemOrder: true
 					}
 				}
 			}
 		})
 
-		res.json({ data: order })
+		res.status(200).json({ data: orderan })
 	} catch (e) {
 		next(e)
 	}
 }
+
+// export const instantBuy = async (req, res, next) => {
+// 	try {
+// 		const produk = await prisma.produk.findUnique({
+// 			where: {
+// 				id: req.params.produkId
+// 			}
+// 		})
+// 		const order = await prisma.order.create({
+// 			data: {
+// 				userId: req.user.id,
+// 				total: parseInt(req.body.kuantitas) * produk.harga,
+// 				itemOrder: {
+// 					create: {
+// 						produkId: produk.id,
+// 						kuantitas: parseInt(req.body.kuantitas)
+// 					}
+// 				}
+// 			}
+// 		})
+
+// 		res.json({ data: order })
+// 	} catch (e) {
+// 		next(e)
+// 	}
+// }
 
 export const dummyPay = async (req, res, next) => {
 	try {
