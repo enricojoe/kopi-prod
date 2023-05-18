@@ -26,14 +26,14 @@ export const createCartItem = async (req, res, next) => {
 				}
 			},
 			update: {
-				kuantitas: req.body.kuantitas,
-				subTotal: produk.harga * req.body.kuantitas
+				kuantitas: parseInt(req.body.kuantitas),
+				subTotal: produk.harga * parseInt(req.body.kuantitas)
 			},
 			create: {
 				keranjangId: keranjang.id,
 				produkId: produk.id,
-				kuantitas: req.body.kuantitas,
-				subTotal: produk.harga * req.body.kuantitas
+				kuantitas: parseInt(req.body.kuantitas),
+				subTotal: produk.harga * parseInt(req.body.kuantitas)
 			}
 		})
 
@@ -132,7 +132,7 @@ export const updateCart = async (req, res, next) => {
 				userId: req.user.id
 			},
 			data: {
-				total: req.body.total
+				total: parseFloat(req.body.total)
 			}
 		})
 

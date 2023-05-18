@@ -13,10 +13,12 @@ export const errorHandler = (err, req, res, next) => {
 }
 
 export const prismaErrorHandler = (err, req, res, next) => {
-	if (err.code === "P2002") {
-		res.status(409).json({ message: "Username sudah digunakan" })
-	} else if (err instanceof Prisma.PrismaClientValidationError) {
+	if (err instanceof Prisma.PrismaClientValidationError) {
 		res.status(406).json({ message: "Input salah" })
+	} else if (err.code === "P2002") {
+		res.status(409).json({ message: "Username sudah digunakan" })
+	} else if (err.code === "P2025") {
+		res.status(404).json({ message: "Data tidak ditemukan" })
 	} else {
 		next(err)
 	}
