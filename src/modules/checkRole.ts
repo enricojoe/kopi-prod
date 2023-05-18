@@ -1,3 +1,5 @@
-export const checkUser = (req, res, next) => {
-	
+export const checkAdmin = (req, res, next) => {
+	if (req.user.role[0] === "A001") {
+		next(e)
+	}
 }

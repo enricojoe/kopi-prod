@@ -1,4 +1,5 @@
 import { Router } from "express";
+// import { visitorCounter } from "../handlers/user"
 import { createProduct, getUserProducts, getAllProducts, getProductById, updateProduct, deleteProduct } from "../handlers/produk"
 import { loggedOn } from "../modules/auth"
 import { handleMultipartData } from "../config"

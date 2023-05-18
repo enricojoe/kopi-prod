@@ -13,6 +13,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model Admin {
+//   id         String    @id @unique @default(cuid())
+//   createdAt  DateTime  @default(now())
+//   modifiedAt DateTime? @default(now()) @updatedAt
+
+//   username String @unique
+//   password String
+// }
+
 model User {
   id         String    @id @unique @default(cuid())
   createdAt  DateTime  @default(now())
@@ -25,6 +34,8 @@ model User {
   noIndukKoperasi String?
   gambar          String?
   deskripsi       String?
+  noTelpon        String?
+  pengunjung      Int      @default(0)
   role            ROLES[]  @default([R101])
   active          Boolean? @default(true)
 
@@ -69,7 +80,7 @@ model Produk {
   sku        String?
   harga      Float
   stok       Int
-  terjual    Int?
+  terjual    Int?     @default(0)
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -133,7 +144,6 @@ model Keranjang {
 }
 
 model ItemOrder {
-  id         String   @id @unique @default(cuid())
   createdAt  DateTime @default(now())
   modifiedAt DateTime @default(now()) @updatedAt
 
@@ -143,7 +153,10 @@ model ItemOrder {
   orderId String
   order   Order  @relation(fields: [orderId], references: [id])
 
-  kuantitas Int
+  kuantitas Int   @default(0)
+  subTotal  Float @default(0)
+
+  @@id([produkId, orderId])
 }
 
 model Order {
@@ -154,9 +167,10 @@ model Order {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
 
-  total Float
+  total            Float
+  status           STATUS_ORDER @default(MENUNGGU_PEMBAYARAN)
+  metodePembayaran String       @default("COD")
 
-  status    STATUS_ORDER @default(MENUNGGU_PEMBAYARAN)
   itemOrder ItemOrder[]
 }
 

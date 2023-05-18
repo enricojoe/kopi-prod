@@ -89,9 +89,14 @@ export const getAllProducts = async (req, res, next) => {
 // - Data user beserta produknya
 export const getUserProducts = async (req, res, next) => {
 	try {
-		const user = await prisma.user.findUnique({
+		const user = await prisma.user.update({
 			where: {
 				id: req.params.tokoId
+			},
+			data: {
+				pengunjung: {
+					increment: 1
+				}
 			},
 			include: {
 				produk: true
