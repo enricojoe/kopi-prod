@@ -55,6 +55,8 @@ export const getCartItem = async (req, res, next) => {
 			}
 		})
 
+
+
 		const item = await prisma.itemKeranjang.findUnique({
 			where: {
 				produkId_keranjangId: {
@@ -101,14 +103,38 @@ export const deleteCartItem = async (req, res, next) => {
 // - Data keranjang beserta item di dalamnya
 export const getUserCart = async (req, res, next) => {
 	try {
-		const keranjang = await prisma.keranjang.findUnique({
+		const keranjang = await prisma.user.findMany({
 			where: {
-				userId: req.user.id
+				produk: {
+					some: {
+						itemKeranjang: {
+							some: {
+								Keranjang: {
+									userId: req.user.id
+								}
+							}
+						}
+					}
+				}
 			},
-			include: {
-				itemKeranjang: {
-					include: {
-						produk: true
+			select: {
+				id: true,
+				namaLengkap: true,
+				produk: {
+					where: {
+						itemKeranjang: {
+							some: {
+
+								Keranjang: {
+									userId: req.user.id
+								}
+							}
+						}
+					},
+					select: {
+						namaProduk: true,
+						gambar: true, 
+						harga: true
 					}
 				}
 			}
