@@ -4,46 +4,54 @@ import prisma from "../db"
 // order (per toko dan disertai pengiriman => kumpulan item order, total/sub total, status, metode pengiriman)
 // transaksi (dengan pembayaran => kumpulan order, total keseluruhan, metode pembayaran, status)
 
+// export const createOrder = async (req, res, next) => {
+// 	try {
+// 		const item_keranjang = req.body.id_produk_keranjang
+// 		var item_order = []
+// 		var total = 0
+
+// 		const order_item_keranjang = await prisma.itemKeranjang.findMany({
+// 			where: {
+// 				Keranjang: {
+// 					userId: req.user.id
+// 				},
+// 				produkId: {
+// 					in: item_keranjang
+// 				}
+// 			}
+// 		})
+
+// 		order_item_keranjang.forEach(item => {
+// 			let contoh_item_order = {
+// 				kuantitas: item.kuantitas,
+// 				subTotal: item.subTotal,
+// 				produkId: item.produkId
+// 			}
+// 			item_order.push(contoh_item_order)
+// 			total += item.subTotal
+// 		})
+
+// 		const order = await prisma.order.create({
+// 			data: {
+// 				userId: req.user.id,
+// 				total: total,
+// 				itemOrder: {
+// 					create: item_order
+// 				}
+// 			}, 
+// 			include: {
+// 				itemOrder: true
+// 			}
+// 		})
+// 		res.status(200).json({ data: order })
+// 	} catch (e) {
+// 		next(e)
+// 	}
+// }
+
 export const createOrder = async (req, res, next) => {
 	try {
-		const item_keranjang = req.body.id_produk_keranjang
-		var item_order = []
-		var total = 0
-
-		const order_item_keranjang = await prisma.itemKeranjang.findMany({
-			where: {
-				Keranjang: {
-					userId: req.user.id
-				},
-				produkId: {
-					in: item_keranjang
-				}
-			}
-		})
-
-		order_item_keranjang.forEach(item => {
-			let contoh_item_order = {
-				kuantitas: item.kuantitas,
-				subTotal: item.subTotal,
-				produkId: item.produkId
-			}
-			item_order.push(contoh_item_order)
-			total += item.subTotal
-		})
-
-		const order = await prisma.order.create({
-			data: {
-				userId: req.user.id,
-				total: total,
-				itemOrder: {
-					create: item_order
-				}
-			}, 
-			include: {
-				itemOrder: true
-			}
-		})
-		res.status(200).json({ data: order })
+		
 	} catch (e) {
 		next(e)
 	}
@@ -56,7 +64,7 @@ export const getUserOrder = async (req, res, next) => {
 				id: req.user.id
 			},
 			select: {
-				Order: true
+				order: true
 			}
 		})
 
@@ -75,7 +83,7 @@ export const getPeopleOrder = async (req, res, next) => {
 			select: {
 				produk: {
 					include: {
-						ItemOrder: true
+						itemOrder: true
 					}
 				}
 			}
@@ -87,48 +95,48 @@ export const getPeopleOrder = async (req, res, next) => {
 	}
 }
 
-export const dummyPay = async (req, res, next) => {
-	try {
-		const order = await prisma.order.findUnique({
-			where: {
-				id: req.params.orderId
-			}
-		})
+// export const dummyPay = async (req, res, next) => {
+// 	try {
+// 		const order = await prisma.order.findUnique({
+// 			where: {
+// 				id: req.params.orderId
+// 			}
+// 		})
 
-		if (order.status !== "MENUNGGU_PEMBAYARAN"){
-			throw new Error("Pesanan sudah dibayarkan")
-		}
-		const bayar = await prisma.order.update({
-			where: {
-				id: order.id
-			},
-			data: {
-				status: "PESANAN_DIPROSES"
-			},
-			include: {
-				itemOrder: true
-			}
-		})
+// 		if (order.status !== "MENUNGGU_PEMBAYARAN"){
+// 			throw new Error("Pesanan sudah dibayarkan")
+// 		}
+// 		const bayar = await prisma.order.update({
+// 			where: {
+// 				id: order.id
+// 			},
+// 			data: {
+// 				status: "PESANAN_DIPROSES"
+// 			},
+// 			include: {
+// 				itemOrder: true
+// 			}
+// 		})
 
-		const produk = await prisma.produk.findUnique({
-			where: {
-				id: bayar.itemOrder[0].produkId
-			}
-		})
+// 		const produk = await prisma.produk.findUnique({
+// 			where: {
+// 				id: bayar.itemOrder[0].produkId
+// 			}
+// 		})
 
-		const updateProduk = await prisma.produk.update({
-			where: {
-				id: produk.id
-			},
-			data: {
-				stok: produk.stok - bayar.itemOrder[0].kuantitas
-			}
-		})
-		res.json({ data: bayar })
-	} catch (e) {
-		next(e)
-	}
-}
+// 		const updateProduk = await prisma.produk.update({
+// 			where: {
+// 				id: produk.id
+// 			},
+// 			data: {
+// 				stok: produk.stok - bayar.itemOrder[0].kuantitas
+// 			}
+// 		})
+// 		res.json({ data: bayar })
+// 	} catch (e) {
+// 		next(e)
+// 	}
+// }
 
 // export const createOrder = async (req, res, next) => {
 // 	try {

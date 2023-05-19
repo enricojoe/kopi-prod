@@ -40,9 +40,10 @@ model User {
   active          Boolean? @default(true)
 
   alamat    Alamat?
-  Keranjang Keranjang?
+  keranjang Keranjang?
   produk    Produk[]
-  Order     Order[]
+  order     Order[]
+  orderToko OrderToko[]
 }
 
 enum ROLES {
@@ -87,7 +88,7 @@ model Produk {
 
   itemKeranjang   ItemKeranjang[]
   kategori_produk ProdukKategori[]
-  ItemOrder       ItemOrder[]
+  itemOrder       ItemOrder[]
 }
 
 model Kategori {
@@ -153,10 +154,29 @@ model ItemOrder {
   orderId String
   order   Order  @relation(fields: [orderId], references: [id])
 
-  kuantitas Int   @default(0)
-  subTotal  Float @default(0)
+  kuantitas   Int        @default(0)
+  subTotal    Float      @default(0)
+  OrderToko   OrderToko? @relation(fields: [orderTokoId], references: [id])
+  orderTokoId String?
 
   @@id([produkId, orderId])
+}
+
+model OrderToko {
+  id         String   @id @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  tokoId String
+  toko   User   @relation(fields: [tokoId], references: [id])
+
+  total         Float
+  statusPesanan STATUS_PESANAN @default(PESANAN_DITERIMA)
+
+  itemOrder ItemOrder[]
 }
 
 model Order {
@@ -168,17 +188,24 @@ model Order {
   user   User   @relation(fields: [userId], references: [id])
 
   total            Float
-  status           STATUS_ORDER @default(MENUNGGU_PEMBAYARAN)
-  metodePembayaran String       @default("COD")
+  statusPembayaran STATUS_PEMBAYARAN @default(MENUNGGU_PEMBAYARAN)
+  metodePembayaran String            @default("COD")
 
+  orderToko OrderToko[]
   itemOrder ItemOrder[]
 }
 
-enum STATUS_ORDER {
-  MENUNGGU_PEMBAYARAN
+enum STATUS_PESANAN {
+  PESANAN_DITERIMA
   PESANAN_DIPROSES
   PESANAN_DIKIRIM
   DIBATALKAN
+}
+
+enum STATUS_PEMBAYARAN {
+  MENUNGGU_PEMBAYARAN
+  PEMBAYARAN_DITERIMA
+  PEMBAYARAN_DIBATALKAN
 }
 
 // model RiwayatOrder {

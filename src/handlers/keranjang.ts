@@ -37,7 +37,7 @@ export const createCartItem = async (req, res, next) => {
 			}
 		})
 
-		res.json({ data: item })
+		res.status(200).json({ data: item })
 	} catch (e) {
 		next(e)
 	}
@@ -54,8 +54,6 @@ export const getCartItem = async (req, res, next) => {
 				userId: req.user.id
 			}
 		})
-
-
 
 		const item = await prisma.itemKeranjang.findUnique({
 			where: {
