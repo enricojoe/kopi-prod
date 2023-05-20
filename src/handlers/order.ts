@@ -64,7 +64,7 @@ export const getUserOrder = async (req, res, next) => {
 				id: req.user.id
 			},
 			select: {
-				order: true
+				Order: true
 			}
 		})
 
@@ -83,7 +83,7 @@ export const getPeopleOrder = async (req, res, next) => {
 			select: {
 				produk: {
 					include: {
-						itemOrder: true
+						ItemOrder: true
 					}
 				}
 			}

@@ -129,6 +129,7 @@ export const getUserCart = async (req, res, next) => {
 						}
 					},
 					select: {
+						id: true,
 						namaProduk: true,
 						gambar: true, 
 						harga: true,
