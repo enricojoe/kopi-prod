@@ -122,7 +122,6 @@ export const getUserCart = async (req, res, next) => {
 					where: {
 						itemKeranjang: {
 							some: {
-
 								Keranjang: {
 									userId: req.user.id
 								}
@@ -132,7 +131,17 @@ export const getUserCart = async (req, res, next) => {
 					select: {
 						namaProduk: true,
 						gambar: true, 
-						harga: true
+						harga: true,
+						itemKeranjang: {
+							where: {
+								Keranjang: {
+									userId: req.user.id
+								}
+							},
+							select: {
+								kuantitas: true
+							}
+						}
 					}
 				}
 			}
