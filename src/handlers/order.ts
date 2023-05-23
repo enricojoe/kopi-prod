@@ -6,7 +6,7 @@ import prisma from "../db"
 
 export const createOrder = async (req, res, next) => {
 	try {
-		const id_produk = JSON.parse(req.body.id_produk_keranjang)
+		const id_produk = req.body.id_produk_keranjang
 		const toko_produk = await prisma.user.findMany({
 			where: {
 				produk: {
