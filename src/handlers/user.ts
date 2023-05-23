@@ -189,20 +189,3 @@ export const merchant = async (req, res, next) => {
 		next(e)
 	}
 }
-
-// export const visitorCounter = async (req, res, next) => {
-// 	try {
-// 		const counter = await prisma.user.update({
-// 			where: {
-// 				id: req.params.tokoId
-// 			}, 
-// 			data: {
-// 				pengunjung: {
-// 					increment: 1
-// 				}
-// 			}
-// 		})
-// 	} finally {
-// 		next()
-// 	}
-// }

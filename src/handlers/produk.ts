@@ -63,15 +63,26 @@ export const createProduct = async (req, res, next) => {
 export const getAllProducts = async (req, res, next) => {
 	try {
 		const produk = await prisma.produk.findMany({
-			include: {
+			select: {
 				user: {
 					select: {
+						id: true,
 						namaLengkap: true,
 					},
 				},
+				namaProduk: true,
+				gambar: true,
+				harga: true,
 				kategori_produk: {
 					select: {
-						kategori: true
+						kategori: {
+							select: {
+								id: true,
+								kategori: true,
+								deskripsi: true,
+								gambar: true
+							}
+						}
 					}
 				}
 			}
@@ -98,8 +109,18 @@ export const getUserProducts = async (req, res, next) => {
 					increment: 1
 				}
 			},
-			include: {
-				produk: true
+			select: {
+				id: true,
+				namaLengkap: true,
+				produk: {
+					select: {
+						id: true,
+						namaProduk: true,
+						gambar: true,
+						harga: true,
+						terjual: true
+					}
+				}
 			}
 		})
 

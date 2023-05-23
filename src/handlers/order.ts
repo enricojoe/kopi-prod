@@ -4,86 +4,191 @@ import prisma from "../db"
 // order (per toko dan disertai pengiriman => kumpulan item order, total/sub total, status, metode pengiriman)
 // transaksi (dengan pembayaran => kumpulan order, total keseluruhan, metode pembayaran, status)
 
-// export const createOrder = async (req, res, next) => {
-// 	try {
-// 		const item_keranjang = req.body.id_produk_keranjang
-// 		var item_order = []
-// 		var total = 0
-
-// 		const order_item_keranjang = await prisma.itemKeranjang.findMany({
-// 			where: {
-// 				Keranjang: {
-// 					userId: req.user.id
-// 				},
-// 				produkId: {
-// 					in: item_keranjang
-// 				}
-// 			}
-// 		})
-
-// 		order_item_keranjang.forEach(item => {
-// 			let contoh_item_order = {
-// 				kuantitas: item.kuantitas,
-// 				subTotal: item.subTotal,
-// 				produkId: item.produkId
-// 			}
-// 			item_order.push(contoh_item_order)
-// 			total += item.subTotal
-// 		})
-
-// 		const order = await prisma.order.create({
-// 			data: {
-// 				userId: req.user.id,
-// 				total: total,
-// 				itemOrder: {
-// 					create: item_order
-// 				}
-// 			}, 
-// 			include: {
-// 				itemOrder: true
-// 			}
-// 		})
-// 		res.status(200).json({ data: order })
-// 	} catch (e) {
-// 		next(e)
-// 	}
-// }
-
 export const createOrder = async (req, res, next) => {
 	try {
-		
-	} catch (e) {
-		next(e)
-	}
-}
-
-export const getUserOrder = async (req, res, next) => {
-	try {
-		const order = await prisma.user.findUnique({
+		const id_produk = JSON.parse(req.body.id_produk_keranjang)
+		const toko_produk = await prisma.user.findMany({
 			where: {
-				id: req.user.id
+				produk: {
+					some: {
+						id: {
+							in: id_produk
+						}
+					}
+				}
 			},
 			select: {
-				Order: true
+				id: true, 
+				produk: {
+					where: {
+						id: {
+							in: id_produk
+						},
+						itemKeranjang: {
+							some: {
+								Keranjang: {
+									userId: req.user.id
+								}
+							}
+						}
+					},
+					select: {
+						id: true,
+						itemKeranjang: {
+							where: {
+								Keranjang: {
+									userId: req.user.id
+								}
+							},
+							select: {
+								kuantitas: true,
+								subTotal: true
+							}
+						}
+					}
+				}
 			}
 		})
 
-		res.status(200).json({ data: order })
+		var total = 0
+		const order_toko = toko_produk.map(toko => {
+			var subTotalToko = 0
+			var list_item = toko.produk.map(item => {
+				subTotalToko += item.itemKeranjang[0].subTotal
+				return {
+					produkId: item.id,
+					kuantitas: item.itemKeranjang[0].kuantitas,
+					subTotal: item.itemKeranjang[0].subTotal
+				}
+			})
+			total += subTotalToko
+			return {
+				tokoId: toko.id,
+				subTotal: subTotalToko,
+				itemOrder: {
+					create: list_item
+				}
+			}
+		})
+
+		const order = await prisma.order.create({
+			data: {
+				userId: req.user.id,
+				total: total,
+				orderToko: {
+					create: order_toko
+				}
+			},
+			select: {
+				id: true,
+				userId: true,
+				total: true,
+				orderToko: {
+					select: {
+						tokoId: true,
+						subTotal: true,
+						itemOrder: {
+							select: {
+								produkId: true,
+								kuantitas: true,
+								subTotal: true
+							}
+						}
+					}
+				}
+			}
+		})
+
+		res.json({ data : order })
 	} catch (e) {
 		next(e)
 	}
 }
 
-export const getPeopleOrder = async (req, res, next) => {
+export const getUserOrderDetail = async (req, res, next) => {
 	try {
-		const orderan = await prisma.user.findUnique({
+		const detail_order = await prisma.orderToko.findUnique({
 			where: {
-				id: req.user.id
+				id: req.params.orderTokoId
 			},
 			select: {
-				produk: {
-					include: {
-						ItemOrder: true
+				order: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								namaLengkap: true,
+								alamat: {
+									select: {
+										provinsi: true,
+										kabupaten: true,
+										kecamatan: true,
+										detailAlamat: true,
+										kodePos: true
+									}
+								}
+							}
+						},
+					}
+				},
+				noResi: true,
+				subTotal: true,
+				statusPesanan: true,
+				itemOrder: {
+					select: {
+						produk: {
+							select: {
+								id: true,
+								namaProduk: true,
+								harga: true,
+								gambar: true
+							}
+						},
+						kuantitas: true,
+						subTotal: true
+					}
+				}
+			}
+		})
+
+		res.status(200).json({ data: detail_order })
+	} catch (e) {
+		next(e)
+	}
+}
+
+// Toko ambil semua orderan ke tokonya
+export const getMerchantOrder = async (req, res, next) => {
+	try {
+		const orderan = await prisma.orderToko.findMany({
+			where: {
+				tokoId: req.user.id
+			},
+			select: {
+				id: true,
+				noResi: true,
+				order: {
+					select: {
+						user: {
+							select: {
+								id: true,
+								namaLengkap: true
+							}
+						}
+					}
+				},
+				itemOrder: {
+					select: {
+						kuantitas: true,
+						subTotal: true,
+						produk: {
+							select: {
+								id: true,
+								namaProduk: true,
+								gambar: true,
+								harga: true
+							}
+						}
 					}
 				}
 			}
@@ -95,78 +200,64 @@ export const getPeopleOrder = async (req, res, next) => {
 	}
 }
 
-// export const dummyPay = async (req, res, next) => {
-// 	try {
-// 		const order = await prisma.order.findUnique({
-// 			where: {
-// 				id: req.params.orderId
-// 			}
-// 		})
+export const getMyOrder = async (req, res, next) => {
+	try {
+		const order = await prisma.order.findMany({
+			where: {
+				userId: req.user.id
+			},
+			select: {
+				total: true,
+				statusPembayaran: true,
+				metodePembayaran: true,
+				orderToko: {
+					select: {
+						toko: {
+							select: {
+								id: true,
+								namaLengkap: true
+							}
+						},
+						noResi: true,
+						subTotal: true,
+						statusPesanan: true,
+						itemOrder: {
+							select: {
+								kuantitas: true,
+								subTotal: true,
+								produk: {
+									select: {
+										namaProduk: true,
+										gambar: true,
+										harga: true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		})
 
-// 		if (order.status !== "MENUNGGU_PEMBAYARAN"){
-// 			throw new Error("Pesanan sudah dibayarkan")
-// 		}
-// 		const bayar = await prisma.order.update({
-// 			where: {
-// 				id: order.id
-// 			},
-// 			data: {
-// 				status: "PESANAN_DIPROSES"
-// 			},
-// 			include: {
-// 				itemOrder: true
-// 			}
-// 		})
+		res.status(200).json({ data: order })
+	} catch (e) {
+		next(e)
+	}
+}
 
-// 		const produk = await prisma.produk.findUnique({
-// 			where: {
-// 				id: bayar.itemOrder[0].produkId
-// 			}
-// 		})
+export const updateTrackingNumber = async (req, res, next) => {
+	try {
+		const update_order = await prisma.orderToko.update({
+			where: {
+				id: req.params.orderTokoId
+			},
+			data: {
+				noResi: req.body.no_resi
+			}
+		})
 
-// 		const updateProduk = await prisma.produk.update({
-// 			where: {
-// 				id: produk.id
-// 			},
-// 			data: {
-// 				stok: produk.stok - bayar.itemOrder[0].kuantitas
-// 			}
-// 		})
-// 		res.json({ data: bayar })
-// 	} catch (e) {
-// 		next(e)
-// 	}
-// }
-
-// export const createOrder = async (req, res, next) => {
-// 	try {
-// 		const item_keranjang_json = req.body.item_keranjang
-// 		var item_order = []
-// 		var total = 0
-// 		item_keranjang_json.forEach(item => {
-// 			let contoh_item_order = {
-// 				kuantitas: item.kuantitas,
-// 				subTotal: item.subTotal,
-// 				produkId: item.produkId
-// 			}
-// 			item_order.push(contoh_item_order)
-// 			total += item.subTotal
-// 		})
-
-// 		const order = await prisma.order.create({
-// 			data: {
-// 				userId: req.user.id,
-// 				total: total,
-// 				itemOrder: {
-// 					create: item_order
-// 				}
-// 			}, 
-// 			include: {
-// 				itemOrder: true
-// 			}
-// 		})
-// 		res.status(200).json({ data: order })
-// 	} catch (e) {
-// 		next(e)
-// 	}
-// }
+		res.status(200).json(update_order)
+	} catch (e) {
+		next(e)
+	}
+}

@@ -151,15 +151,13 @@ model ItemOrder {
   produkId String
   produk   Produk @relation(fields: [produkId], references: [id], onDelete: NoAction)
 
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id])
+  orderToko   OrderToko @relation(fields: [orderTokoId], references: [id], onDelete: Cascade)
+  orderTokoId String
 
-  kuantitas   Int        @default(0)
-  subTotal    Float      @default(0)
-  OrderToko   OrderToko? @relation(fields: [orderTokoId], references: [id])
-  orderTokoId String?
+  kuantitas Int   @default(0)
+  subTotal  Float @default(0)
 
-  @@id([produkId, orderId])
+  @@id([produkId, orderTokoId])
 }
 
 model OrderToko {
@@ -168,12 +166,13 @@ model OrderToko {
   modifiedAt DateTime @default(now()) @updatedAt
 
   orderId String
-  order   Order  @relation(fields: [orderId], references: [id])
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   tokoId String
-  toko   User   @relation(fields: [tokoId], references: [id])
+  toko   User   @relation(fields: [tokoId], references: [id], onDelete: Cascade)
 
-  total         Float
+  noResi        String         @default("-")
+  subTotal      Float          @default(0)
   statusPesanan STATUS_PESANAN @default(PESANAN_DITERIMA)
 
   itemOrder ItemOrder[]
@@ -187,12 +186,11 @@ model Order {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  total            Float
+  total            Float             @default(0)
   statusPembayaran STATUS_PEMBAYARAN @default(MENUNGGU_PEMBAYARAN)
   metodePembayaran String            @default("COD")
 
   orderToko OrderToko[]
-  itemOrder ItemOrder[]
 }
 
 enum STATUS_PESANAN {
@@ -206,6 +204,7 @@ enum STATUS_PEMBAYARAN {
   MENUNGGU_PEMBAYARAN
   PEMBAYARAN_DITERIMA
   PEMBAYARAN_DIBATALKAN
+  PEMBAYARAN_KADALUARSA
 }
 
 // model RiwayatOrder {
