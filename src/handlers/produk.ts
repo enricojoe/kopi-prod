@@ -257,3 +257,42 @@ export const deleteProduct = async (req, res, next) => {
 		next(e)
 	}
 }
+
+export const searchProduct = async (req, res, next) => {
+	try {
+		const cari = await prisma.produk.findMany({
+			where: {
+				namaProduk: {
+					search: req.body.cari
+				}
+			},
+			select: {
+				user: {
+					select: {
+						id: true,
+						namaLengkap: true,
+					},
+				},
+				namaProduk: true,
+				gambar: true,
+				harga: true,
+				kategori_produk: {
+					select: {
+						kategori: {
+							select: {
+								id: true,
+								kategori: true,
+								deskripsi: true,
+								gambar: true
+							}
+						}
+					}
+				}
+			}
+		})
+
+		res.json({ data: cari })
+	} catch (e) {
+		next(e)
+	}
+}
