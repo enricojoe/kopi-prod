@@ -64,6 +64,7 @@ export const getAllProducts = async (req, res, next) => {
 	try {
 		const produk = await prisma.produk.findMany({
 			select: {
+				id: true,
 				user: {
 					select: {
 						id: true,
