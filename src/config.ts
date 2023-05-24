@@ -27,9 +27,9 @@ export const handleMultipartData = multer({
 
 // Cloudinary Configuration 
 cloudinary.config({
-	cloud_name: process.env.CLOUD_NAME,
-	api_key: process.env.API_KEY,
-	api_secret: process.env.API_SECRET
+	cloud_name: process.env.SIKOPI_CLOUD_NAME,
+	api_key: process.env.SIKOPI_API_KEY,
+	api_secret: process.env.SIKOPI_API_SECRET
 });
 
 export const uploadImage = async (file, folder) => {
