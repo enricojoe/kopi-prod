@@ -54,3 +54,41 @@
         "jenis_akun": "Pembeli"
     }
 ]
+
+
+
+
+[
+  {
+    "produkId": "clhp58a650001k87kot8pgkrz",
+    "kuantitas": 4,
+    "subTotal": 480000
+  },
+  {
+    "produkId": "clhknpvyy0007zpsemfrj23ap",
+    "kuantitas": 4,
+    "subTotal": 480000
+  }
+]
+[
+  {
+    "produkId": "clhkmoigf00064huow9olbvwn",
+    "kuantitas": 4,
+    "subTotal": 60000
+  }
+]
+
+
+
+
+{
+  "id": "clhka0hyg0000zplwvrzwkz23",
+  "produk": [
+    { "id": "clhp58a650001k87kot8pgkrz", "itemKeranjang": [Array] },
+    { "id": "clhknpvyy0007zpsemfrj23ap", "itemKeranjang": [Array] }
+  ]
+}
+{
+  "id": "clhkmnex400044huo1vguxr1u",
+  "produk": [ { "id": "clhkmoigf00064huow9olbvwn", "itemKeranjang": [Array] } ]
+}

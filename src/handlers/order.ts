@@ -105,6 +105,7 @@ export const createOrder = async (req, res, next) => {
 	}
 }
 
+// Toko ambil detail dari order user
 export const getUserOrderDetail = async (req, res, next) => {
 	try {
 		const detail_order = await prisma.orderToko.findUnique({
@@ -218,7 +219,6 @@ export const getMyOrder = async (req, res, next) => {
 								namaLengkap: true
 							}
 						},
-						noResi: true,
 						subTotal: true,
 						statusPesanan: true,
 						itemOrder: {
@@ -240,6 +240,53 @@ export const getMyOrder = async (req, res, next) => {
 		})
 
 		res.status(200).json({ data: order })
+	} catch (e) {
+		next(e)
+	}
+}
+
+export const getMyOrderDetail = async (req, res, next) => {
+	try {
+		const detail_order = await prisma.order.findUnique({
+			where: {
+				id: req.params.orderId
+			},
+			select: {
+				id: true,
+				total: true,
+				statusPembayaran: true,
+				metodePembayaran: true,
+				orderToko: {
+					select: {
+						toko: {
+							select: {
+								id: true,
+								namaLengkap: true
+							}
+						},
+						noResi: true,
+						subTotal: true,
+						statusPesanan: true,
+						itemOrder: {
+							select: {
+								produk: {
+									select: {
+										id: true,
+										namaProduk: true,
+										harga: true,
+										gambar: true,
+									}
+								},
+								kuantitas: true,
+								subTotal: true
+							}
+						}
+					}
+				}
+			}
+		})
+
+		res.status(200).json({ data: detail_order })
 	} catch (e) {
 		next(e)
 	}
