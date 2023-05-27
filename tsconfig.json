@@ -2,13 +2,9 @@
   "compilerOptions": {
     "types": ["node"],
     "sourceMap": true,
-    "target": "ES2018",
     "outDir": "build",
     "lib": ["esnext"],
     "esModuleInterop": true,
-    "strict": true,
-    "module": "commonjs",
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+    "declaration": true
+  }
 }
