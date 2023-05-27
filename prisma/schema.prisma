@@ -5,7 +5,7 @@
 // 102 : Pembeli
 // 103 : Penjual
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
@@ -190,8 +190,30 @@ model Order {
   total            Float             @default(0)
   statusPembayaran STATUS_PEMBAYARAN @default(MENUNGGU_PEMBAYARAN)
   metodePembayaran String            @default("COD")
+  token            String?
 
-  orderToko OrderToko[]
+  orderToko      OrderToko[]
+  transaksiOrder TransaksiOrder?
+}
+
+model TransaksiOrder {
+  id         String   @id @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  statusCode       String
+  statusMessage    String
+  totalPembayaran  Float
+  metodePembayaran String
+  statusTransaksi  String
+  waktuTransaksi   DateTime
+  pdf              String?
+  fraudStatus      String
+  bank             String?
+  vaNumber         String
 }
 
 enum STATUS_PESANAN {

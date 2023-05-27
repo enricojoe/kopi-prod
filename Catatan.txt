@@ -22,3 +22,9 @@ SIKOPI_DATABASE_URL="postgresql://sikopi_admin:i&Yk8j%2vFY6GJx@localhost:5432/si
 SIKOPI_CLOUD_NAME="dlz675v0x"
 SIKOPI_API_KEY="718332891837113"
 SIKOPI_API_SECRET="AwUPPLAIGpRqIsR8hahA_4VjNb8"
+
+
+buat transaction api dari prisma buat
+- transaksi order
+
+Buat logic biar 
