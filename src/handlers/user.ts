@@ -121,6 +121,8 @@ export const updateProfile = async (req, res, next) => {
 		data: {
 			namaLengkap: req.body.nama_lengkap,
 			noIndukKoperasi: req.body.no_induk_koperasi,
+			noTelpon: req.body.no_telpon,
+			deskripsi: req.body.deskripsi,
 			gambar: image
 		}
 	})

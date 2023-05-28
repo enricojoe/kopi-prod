@@ -76,6 +76,7 @@ export const createOrder = async (req, res, next) => {
 			data: {
 				userId: req.user.id,
 				total: total,
+				metodePembayaran: req.body.metode_pembayaran,
 				orderToko: {
 					create: order_toko
 				}
@@ -359,6 +360,7 @@ export const getMyOrder = async (req, res, next) => {
 				userId: req.user.id
 			},
 			select: {
+				id: true,
 				total: true,
 				statusPembayaran: true,
 				metodePembayaran: true,
@@ -407,6 +409,7 @@ export const getMyOrderDetail = async (req, res, next) => {
 				total: true,
 				statusPembayaran: true,
 				metodePembayaran: true,
+				token: true,
 				orderToko: {
 					select: {
 						toko: {
