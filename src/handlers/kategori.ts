@@ -1,9 +1,10 @@
 import prisma from "../db"
+
 import { uploadImage } from "../config"
 
 export const createCategory = async (req, res, next) => {
 	try {
-		const image = await uploadImage(req.file, "kategori")
+		const image = await uploadImage(req.body.gambar, "kategori")
 		const kategori = await prisma.kategori.create({
 			data: {
 				kategori: req.body.kategori,
@@ -30,8 +31,8 @@ export const getAllCategory = async (req, res, next) => {
 
 export const updateCategory = async (req, res, next) => {
 	try {
-		if (req.file) {
-			const image = await uploadImage(req.file, "kategori")
+		if (req.body.gambar) {
+			const image = await uploadImage(req.body.gambar, "kategori")
 			const updated = await prisma.kategori.update({
 				where: {
 					id: req.params.kategoriId

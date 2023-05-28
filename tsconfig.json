@@ -1,10 +1,16 @@
 {
   "compilerOptions": {
     "types": ["node"],
+    "target": "ESNext",
+    "moduleResolution":"node",
     "sourceMap": true,
     "outDir": "build",
     "lib": ["esnext"],
     "esModuleInterop": true,
     "declaration": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
 }

@@ -1,4 +1,5 @@
 import prisma from "../db";
+
 import { hashPassword, comparePassword, createJWT } from "../modules/auth";
 import { uploadImage } from "../config";
 

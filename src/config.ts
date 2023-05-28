@@ -2,7 +2,8 @@ import multer from 'multer'
 import dotenv  from "dotenv"
 import path from "path"
 import { v2 as cloudinary } from 'cloudinary'
-const DatauriParser = require('datauri/parser');
+import DatauriParser from 'datauri/parser'
+// const DatauriParser = require('datauri/parser');
 const parser = new DatauriParser();
 
 dotenv.config()
