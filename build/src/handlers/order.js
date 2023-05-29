@@ -49,6 +49,7 @@ export const createOrder = async (req, res, next) => {
             }
         });
         var total = 0;
+        var jumlah_toko = toko_produk.length;
         const order_toko = toko_produk.map(toko => {
             var subTotalToko = 0;
             var list_item = toko.produk.map(item => {
@@ -72,7 +73,9 @@ export const createOrder = async (req, res, next) => {
             data: {
                 userId: req.user.id,
                 total: total,
-                metodePembayaran: req.body.metode_pembayaran,
+                metodePembayaran: req.body.metodePembayaran,
+                biayaLayanan: req.body.biayaLayanan,
+                biayaTransaksi: req.body.biayaTransaksi,
                 orderToko: {
                     create: order_toko
                 }
@@ -81,6 +84,8 @@ export const createOrder = async (req, res, next) => {
                 id: true,
                 userId: true,
                 total: true,
+                biayaLayanan: true,
+                biayaTransaksi: true,
                 metodePembayaran: true,
                 orderToko: {
                     select: {
@@ -97,11 +102,13 @@ export const createOrder = async (req, res, next) => {
                 }
             }
         });
+
+        total = order.total + order.biayaLayanan + order.biayaTransaksi + (20000 * jumlah_toko)
         if (order.metodePembayaran !== "COD") {
             const parameter = {
                 transaction_details: {
                     order_id: order.id,
-                    gross_amount: order.total
+                    gross_amount: total
                 },
                 customer_details: {
                     first_name: "Pembayaran",
