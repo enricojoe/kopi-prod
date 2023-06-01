@@ -196,7 +196,7 @@ model Order {
   biayaLayanan     Float             @default(0)
   biayaTransaksi   Float             @default(0)
   statusPembayaran STATUS_PEMBAYARAN @default(MENUNGGU_PEMBAYARAN)
-  metodePembayaran String            @default("COD")
+  metodePembayaran String            @default("Cashless")
   token            String?
 
   orderToko      OrderToko[]

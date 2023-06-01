@@ -78,7 +78,7 @@ export const createOrder = async (req, res, next) => {
 			data: {
 				userId: req.user.id,
 				total: total,
-				metodePembayaran: req.body.metodePembayaran,
+				metodePembayaran: req.body.metode_pembayaran,
 				biayaLayanan: req.body.biayaLayanan,
 				biayaTransaksi: req.body.biayaTransaksi,
 				orderToko: {
