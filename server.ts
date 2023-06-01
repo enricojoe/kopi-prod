@@ -9,7 +9,7 @@ const app = express();
 const port = 5000;
 
 app.use(cors({
-    origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
+    origin: "*",
     methods: ['GET','POST','DELETE','UPDATE','PATCH']
 }))
 app.use(morgan('dev'))

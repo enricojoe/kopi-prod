@@ -195,23 +195,113 @@ export const merchant = async (req, res, next) => {
 
 export const merchantInfo = async (req, res, next) => {
 	try {
-		const toko = await prisma.user.findUnique({
+		const belum_bayar = await prisma.orderToko.count({
+			where: {
+				tokoId: req.user.id,
+				order: {
+					statusPembayaran: "MENUNGGU_PEMBAYARAN"
+				}
+			}
+		})
+
+		const perlu_diproses = await prisma.orderToko.count({
+			where: {
+				statusPesanan: "PESANAN_DITERIMA",
+				tokoId: req.user.id,
+				order: {
+					statusPembayaran: "PEMBAYARAN_DITERIMA"
+				}
+			}
+		})
+
+		const sedang_diproses = await prisma.orderToko.count({
+			where: {
+				statusPesanan: "PESANAN_DIPROSES",
+				tokoId: req.user.id,
+				order: {
+					statusPembayaran: "PEMBAYARAN_DITERIMA"
+				}
+			}
+		})
+
+		const dalam_pengiriman = await prisma.orderToko.count({
+			where: {
+				statusPesanan: "PESANAN_DIKIRIM",
+				tokoId: req.user.id,
+				order: {
+					statusPembayaran: "PEMBAYARAN_DITERIMA"
+				}
+			}
+		})
+
+		const produk_habis = await prisma.produk.count({
+			where: {
+				userId: req.user.id,
+				stok: 0
+			}
+		})
+
+		const produk_terjual = await prisma.produk.groupBy({
+			by: ['userId'],
+			where: {
+				userId: req.user.id
+			},
+			_sum: {
+				terjual: true
+			}
+		})
+
+		// const toko = await prisma.user.findUnique
+
+		// const order = await prisma.user.findUnique({
+		// 	where: {
+		// 		id: req.user.id
+		// 	}, 
+		// 	select: {
+		// 		id: true,
+		// 		pengunjung: true,
+		// 		_count: {
+		// 			select: {
+		// 				produk: true,
+		// 				orderToko: {
+		// 					where: {
+		// 						order: {
+		// 							is: {
+		// 								statusPembayaran: "MENUNGGU_PEMBAYARAN"
+		// 							}
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// })		
+
+		const user = await prisma.user.findUnique({
 			where: {
 				id: req.user.id
 			},
-			// select: {
-			// 	orderToko: {
-			// 		select: {
-						
-			// 			_count: {
-			// 				order: true
-			// 			}
-			// 		}
-			// 	}
-			// }
+			select: {
+				pengunjung: true,
+				_count: {
+					select: {
+						produk: true
+					}
+				}
+			}
 		})
 
-		res.status(200).json({ data: toko })
+		const hasil = { 
+			belum_bayar, 
+			perlu_diproses, 
+			sedang_diproses, 
+			dalam_pengiriman,
+			produk_habis,
+			produk_terjual,
+			user
+		}
+
+		res.status(200).json({ data: hasil })
 	} catch (e) {
 		next(e)
 	}
