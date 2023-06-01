@@ -3,15 +3,15 @@
 // 		next(e)
 // 	}
 // }
-
 // export const checkKeranjang = (req, res, next) => {
 // 	if (req.)
 // }
-
 export const checkToko = (req, res, next) => {
-	if (req.user.role.includes("R102")) {
-		next()
-	} else {
-		res.status(401).json({ message: "Tidak authorized" })
-	}
-}
+    if (req.user.role.includes("R102")) {
+        next();
+    }
+    else {
+        res.status(401).json({ message: "Tidak authorized" });
+    }
+};
+//# sourceMappingURL=checkRole.js.map
