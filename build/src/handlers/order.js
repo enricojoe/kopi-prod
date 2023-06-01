@@ -265,6 +265,7 @@ export const getUserOrderDetail = async (req, res, next) => {
                 order: {
                     select: {
                         id: true,
+                        createdAt: true,
                         user: {
                             select: {
                                 id: true,
@@ -320,6 +321,8 @@ export const getMerchantOrder = async (req, res, next) => {
                 noResi: true,
                 createdAt: true,
                 statusPesanan: true,
+                subTotal: true,
+                ongkosKirim: true,
                 order: {
                     select: {
                         user: {
