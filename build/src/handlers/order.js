@@ -264,10 +264,12 @@ export const getUserOrderDetail = async (req, res, next) => {
             select: {
                 order: {
                     select: {
+                        id: true,
                         user: {
                             select: {
                                 id: true,
                                 namaLengkap: true,
+                                noTelpon: true,
                                 alamat: {
                                     select: {
                                         provinsi: true,
@@ -316,6 +318,8 @@ export const getMerchantOrder = async (req, res, next) => {
             select: {
                 id: true,
                 noResi: true,
+                createdAt: true,
+                statusPesanan: true,
                 order: {
                     select: {
                         user: {
