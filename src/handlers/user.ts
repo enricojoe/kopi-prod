@@ -192,3 +192,27 @@ export const merchant = async (req, res, next) => {
 		next(e)
 	}
 }
+
+export const merchantInfo = async (req, res, next) => {
+	try {
+		const toko = await prisma.user.findUnique({
+			where: {
+				id: req.user.id
+			},
+			// select: {
+			// 	orderToko: {
+			// 		select: {
+						
+			// 			_count: {
+			// 				order: true
+			// 			}
+			// 		}
+			// 	}
+			// }
+		})
+
+		res.status(200).json({ data: toko })
+	} catch (e) {
+		next(e)
+	}
+}
