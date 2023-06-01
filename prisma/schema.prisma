@@ -84,6 +84,9 @@ model Produk {
   stok       Int
   terjual    Int      @default(0)
   berat      Int      @default(0)
+  panjang Int @default(0)
+  tinggi Int @default(0)
+  lebar Int @default(0)
 
   userId String
   user   User   @relation(fields: [userId], references: [id])

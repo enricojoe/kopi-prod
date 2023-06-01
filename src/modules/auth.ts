@@ -1,6 +1,7 @@
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt"
 import dotenv  from "dotenv"
+
+import jwt from "./jwt"
 
 dotenv.config()
 
@@ -17,7 +18,7 @@ export const createJWT = (user) => {
       id: user.id,
       role: user.role
     }, 
-    process.env.JWT_SECRET
+    process.env.JWTPrivateKey
   )
   return token
 }
@@ -26,8 +27,7 @@ export const loggedOn = (req, res, next) => {
   const bearer = req.headers.authorization || req.headers.Authorization
 
   if (!bearer) {
-    res.status(401)
-    res.json({message: "Tidak authorized"})
+    res.status(401).json({message: "Tidak authorized"})
     return
   }
 
@@ -40,13 +40,12 @@ export const loggedOn = (req, res, next) => {
   }
 
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET)
+    const user = jwt.verify(token, process.env.JWTPublicKey)
     req.user = user
     next()
   } catch (e) {
     console.log(e)
-    res.status(401)
-    res.json({message: "Tidak authorized"})
+    res.status(401).json({message: "Tidak authorized"})
     return
   }
 }

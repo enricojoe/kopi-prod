@@ -2,9 +2,8 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-
-import router from './src/router/index'
 import { errorHandler } from './src/handlers/error'
+import router from './src/router/index'
 
 const app = express();
 const port = 5000;
