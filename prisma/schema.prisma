@@ -216,11 +216,11 @@ model TransaksiOrder {
   totalPembayaran  Float
   metodePembayaran String
   statusTransaksi  String
-  waktuTransaksi   DateTime
+  waktuTransaksi   String
   pdf              String?
   fraudStatus      String
   bank             String?
-  vaNumber         String
+  vaNumber         String?
 }
 
 enum STATUS_PESANAN {
