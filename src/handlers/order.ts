@@ -145,11 +145,7 @@ export const transactionResult = async (req, res, next) => {
 		if ((status === "settlement") || (status === "capture")) {
 			await prisma.transaksiOrder.create({
 				data: {
-					order: {
-						connect: {
-							id: req.body.order_id
-						}
-					},
+					orderId: req.body.order_id,
 					statusCode: req.body.status_code,
 					statusMessage: req.body.status_message,
 					totalPembayaran: parseFloat(req.body.gross_amount),
