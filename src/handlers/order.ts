@@ -152,14 +152,14 @@ export const transactionResult = async (req, res, next) => {
 					},
 					statusCode: req.body.status_code,
 					statusMessage: req.body.status_message,
-					totalPembayaran: req.body.gross_amount,
+					totalPembayaran: parseFloat(req.body.gross_amount),
 					metodePembayaran: req.body.payment_type,
 					statusTransaksi: status,
 					waktuTransaksi: req.body.transaction_time,
 					pdf: req.body.pdf_url,
 					fraudStatus: req.body.fraud_status,
-					bank: req.body.bank || req.body.va_numbers[0].bank,
-					vaNumber: req.body.va_numbers[0].va_number
+					bank: req.body.bank || (req.body.va_numbers ? req.body.va_numbers[0].bank : undefined),
+					vaNumber: (req.body.va_numbers ? req.body.va_numbers[0].va_number : undefined)
 				}
 			})
 
