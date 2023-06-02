@@ -12,6 +12,7 @@ export const checkToko = (req, res, next) => {
     }
     else {
         res.status(401).json({ message: "Tidak authorized" });
+        return;
     }
 };
 //# sourceMappingURL=checkRole.js.map

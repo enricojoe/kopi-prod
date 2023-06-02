@@ -8,7 +8,8 @@ import snap from "../midtrans"
 
 export const createOrder = async (req, res, next) => {
 	try {
-		const id_produk = req.body.id_produk_keranjang
+		// hapus json parse
+		const id_produk = JSON.parse(req.body.id_produk_keranjang)
 		const toko_produk = await prisma.user.findMany({
 			where: {
 				produk: {
@@ -79,8 +80,8 @@ export const createOrder = async (req, res, next) => {
 				userId: req.user.id,
 				total: total,
 				metodePembayaran: req.body.metode_pembayaran,
-				biayaLayanan: req.body.biayaLayanan,
-				biayaTransaksi: req.body.biayaTransaksi,
+				biayaLayanan: parseFloat(req.body.biayaLayanan),
+				biayaTransaksi: parseFloat(req.body.biayaTransaksi),
 				orderToko: {
 					create: order_toko
 				}
@@ -106,6 +107,30 @@ export const createOrder = async (req, res, next) => {
 					}
 				}
 			}
+		})
+
+		order_toko.forEach(async toko => {
+			await prisma.user.update({
+				where: {
+					id: toko.tokoId
+				},
+				data: {
+					produk: {
+						update: toko.itemOrder.create.map(item => {
+							return {
+								where: {
+									id: item.produkId
+								},
+								data: {
+									stok: {
+										decrement: item.kuantitas
+									}
+								}
+							}
+						})
+					}
+				}
+			})
 		})
 
 		total = order.total + order.biayaLayanan + order.biayaTransaksi + (20000 * jumlah_toko)
@@ -142,88 +167,47 @@ export const createOrder = async (req, res, next) => {
 export const transactionResult = async (req, res, next) => {
 	try {
 		const status = req.body.transaction_status
-		if ((status === "settlement") || (status === "capture")) {
-			await prisma.transaksiOrder.create({
-				data: {
-					orderId: req.body.order_id,
-					statusCode: req.body.status_code,
-					statusMessage: req.body.status_message,
-					totalPembayaran: parseFloat(req.body.gross_amount),
-					metodePembayaran: req.body.payment_type,
-					statusTransaksi: status,
-					waktuTransaksi: req.body.transaction_time,
-					pdf: req.body.pdf_url,
-					fraudStatus: req.body.fraud_status,
-					bank: req.body.bank || (req.body.va_numbers ? req.body.va_numbers[0].bank : undefined),
-					vaNumber: (req.body.va_numbers ? req.body.va_numbers[0].va_number : undefined)
-				}
-			})
-
-			const order = await prisma.order.findUnique({
-				where: {
-					id: req.body.order_id
-				},
-				select: {
-					orderToko: {
-						select: {
-							id: true,
-							tokoId: true,
-							itemOrder: {
-								select: {
-									produkId: true,
-									kuantitas: true
-								}
-							}
-						}
-					}
-				}
-			})
-
-			const update_kuantitas = order.orderToko.map(toko => {
-				return {
-					where: {
-						id: toko.id
-					},
-					data: {
-						toko: {
-							update: {
-								where: {
-									id: toko.tokoId
-								},
-								data: {
-									produk: {
-										update: toko.itemOrder.map(item => {
-											return {
-												where: {
-													produkId_orderTokoId: {
-														produkId: item.produkId,
-														orderTokoId: toko.id
-													}
-												},
-												data: {
-													kuantitas: {
-														decrement: item.kuantitas
-													}
-												}
-											}
-										})
+		const transaksi = await prisma.transaksiOrder.create({
+			data: {
+				orderId: req.body.order_id,
+				statusCode: req.body.status_code,
+				statusMessage: req.body.status_message,
+				totalPembayaran: parseFloat(req.body.gross_amount),
+				metodePembayaran: req.body.payment_type,
+				statusTransaksi: status,
+				waktuTransaksi: req.body.transaction_time,
+				pdf: req.body.pdf_url,
+				fraudStatus: req.body.fraud_status,
+				bank: req.body.bank || (req.body.va_numbers ? req.body.va_numbers[0].bank : undefined),
+				vaNumber: (req.body.va_numbers ? req.body.va_numbers[0].va_number : undefined)
+			},
+			select: {
+				order: {
+					select: {
+						orderToko: {
+							select: {
+								id: true,
+								tokoId: true,
+								itemOrder: {
+									select: {
+										produkId: true,
+										kuantitas: true
 									}
 								}
 							}
 						}
 					}
 				}
-			})
-			
+			}
+		})
+
+		if ((status === "settlement") || (status === "capture")) {
 			await prisma.order.update({
 				where: {
 					id: req.body.order_id
 				},
 				data: {
-					statusPembayaran: "PEMBAYARAN_DITERIMA",
-					orderToko: {
-						update: update_kuantitas
-					}
+					statusPembayaran: "PEMBAYARAN_DITERIMA"
 				}
 			})
 
@@ -238,6 +222,30 @@ export const transactionResult = async (req, res, next) => {
 				}
 			})
 
+			transaksi.order.orderToko.forEach(async toko => {
+				await prisma.user.update({
+					where: {
+						id: toko.tokoId
+					},
+					data: {
+						produk: {
+							update: toko.itemOrder.map(item => {
+								return {
+									where: {
+										id: item.produkId
+									},
+									data: {
+										stok: {
+											increment: item.kuantitas
+										}
+									}
+								}
+							})
+						}
+					}
+				})
+			})
+
 			res.status(200).json({ message: "Pembayaran Dibatalkan" })
 		} else if (status === "expired") {
 			await prisma.order.update({
@@ -247,6 +255,30 @@ export const transactionResult = async (req, res, next) => {
 				data: {
 					statusPembayaran: "PEMBAYARAN_KADALUARSA"
 				}
+			})
+
+			transaksi.order.orderToko.forEach(async toko => {
+				await prisma.user.update({
+					where: {
+						id: toko.tokoId
+					},
+					data: {
+						produk: {
+							update: toko.itemOrder.map(item => {
+								return {
+									where: {
+										id: item.produkId
+									},
+									data: {
+										stok: {
+											increment: item.kuantitas
+										}
+									}
+								}
+							})
+						}
+					}
+				})
 			})
 
 			res.status(200).json({ message: "Pembayaran Kadaluarsa"})

@@ -234,30 +234,6 @@ export const merchantInfo = async (req, res, next) => {
                 terjual: true
             }
         });
-        // const toko = await prisma.user.findUnique
-        // const order = await prisma.user.findUnique({
-        // 	where: {
-        // 		id: req.user.id
-        // 	}, 
-        // 	select: {
-        // 		id: true,
-        // 		pengunjung: true,
-        // 		_count: {
-        // 			select: {
-        // 				produk: true,
-        // 				orderToko: {
-        // 					where: {
-        // 						order: {
-        // 							is: {
-        // 								statusPembayaran: "MENUNGGU_PEMBAYARAN"
-        // 							}
-        // 						}
-        // 					}
-        // 				}
-        // 			}
-        // 		}
-        // 	}
-        // })		
         const user = await prisma.user.findUnique({
             where: {
                 id: req.user.id
