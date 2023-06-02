@@ -133,7 +133,7 @@ export const createOrder = async (req, res, next) => {
 };
 export const transactionResult = async (req, res, next) => {
     try {
-        const status = req.body.trasaction_status;
+        const status = req.body.transaction_status;
         if ((status === "settlement") || (status === "capture")) {
             await prisma.transaksiOrder.create({
                 data: {

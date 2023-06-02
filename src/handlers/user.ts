@@ -107,7 +107,6 @@ export const profile = async (req, res, next) => {
 // Response:
 // - Data user yang sudah diupdate
 export const updateProfile = async (req, res, next) => {
-
   try {
   	var image = undefined
 
@@ -250,32 +249,6 @@ export const merchantInfo = async (req, res, next) => {
 				terjual: true
 			}
 		})
-
-		// const toko = await prisma.user.findUnique
-
-		// const order = await prisma.user.findUnique({
-		// 	where: {
-		// 		id: req.user.id
-		// 	}, 
-		// 	select: {
-		// 		id: true,
-		// 		pengunjung: true,
-		// 		_count: {
-		// 			select: {
-		// 				produk: true,
-		// 				orderToko: {
-		// 					where: {
-		// 						order: {
-		// 							is: {
-		// 								statusPembayaran: "MENUNGGU_PEMBAYARAN"
-		// 							}
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// })		
 
 		const user = await prisma.user.findUnique({
 			where: {
