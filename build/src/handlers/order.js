@@ -430,12 +430,7 @@ export const getMerchantOrder = async (req, res, next) => {
                 ongkosKirim: true,
                 order: {
                     select: {
-                        user: {
-                            select: {
-                                id: true,
-                                namaLengkap: true
-                            }
-                        }
+                        statusPembayaran: true 
                     }
                 },
                 itemOrder: {
