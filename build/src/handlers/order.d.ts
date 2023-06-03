@@ -5,4 +5,4 @@ export declare const cancelOrder: (req: any, res: any, next: any) => Promise<voi
 export declare const getMerchantOrder: (req: any, res: any, next: any) => Promise<void>;
 export declare const getMyOrder: (req: any, res: any, next: any) => Promise<void>;
 export declare const getMyOrderDetail: (req: any, res: any, next: any) => Promise<void>;
-export declare const updateTrackingNumber: (req: any, res: any, next: any) => Promise<void>;
+export declare const updateOrder: (req: any, res: any, next: any) => Promise<void>;

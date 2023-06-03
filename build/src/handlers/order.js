@@ -462,6 +462,9 @@ export const getMerchantOrder = async (req, res, next) => {
 export const getMyOrder = async (req, res, next) => {
     try {
         const order = await prisma.order.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            },
             where: {
                 userId: req.user.id
             },
@@ -551,17 +554,18 @@ export const getMyOrderDetail = async (req, res, next) => {
         next(e);
     }
 };
-export const updateTrackingNumber = async (req, res, next) => {
+export const updateOrder = async (req, res, next) => {
     try {
         const update_order = await prisma.orderToko.update({
             where: {
                 id: req.params.orderTokoId
             },
             data: {
-                noResi: req.body.no_resi
+                noResi: req.body.no_resi,
+                statusPesanan: req.body.status_pesanan
             }
         });
-        res.status(200).json(update_order);
+        res.status(200).json({ data: update_order });
     }
     catch (e) {
         next(e);
