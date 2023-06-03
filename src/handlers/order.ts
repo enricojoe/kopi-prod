@@ -363,6 +363,70 @@ export const getUserOrderDetail = async (req, res, next) => {
 	}
 }
 
+export const cancelOrder = async (req, res, next) => {
+	try {
+		const order_dibatalkan = await prisma.order.update({
+			where: {
+				id: req.params.orderId
+			},
+			data: {
+				statusPembayaran: "PEMBAYARAN_DIBATALKAN",
+				orderToko: {
+					updateMany: {
+						where: {
+							orderId: req.params.orderId
+						},
+						data: {
+							statusPesanan: "DIBATALKAN"
+						}
+					}
+				}
+			},
+			select: {
+				orderToko: {
+					select: {
+						tokoId: true,
+						itemOrder: {
+							select: {
+								produkId: true,
+								kuantitas: true
+							}
+						}
+					}
+				}
+			}
+		})
+
+		order_dibatalkan.orderToko.forEach(async toko => {
+			await prisma.user.update({
+				where: {
+					id: toko.tokoId
+				},
+				data: {
+					produk: {
+						update: toko.itemOrder.map(item => {
+							return {
+								where: {
+									id: item.produkId
+								},
+								data: {
+									stok: {
+										increment: item.kuantitas
+									}
+								}
+							}
+						})
+					}
+				}
+			})
+		})
+
+		res.status(200).json({ message: "Pesanan Dibatalkan" })
+	} catch (e) {
+		next(e)
+	}
+}
+
 // Toko ambil semua orderan ke tokonya
 export const getMerchantOrder = async (req, res, next) => {
 	try {
@@ -437,6 +501,7 @@ export const getMyOrder = async (req, res, next) => {
 								subTotal: true,
 								produk: {
 									select: {
+										id: true,
 										namaProduk: true,
 										gambar: true,
 										harga: true

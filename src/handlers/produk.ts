@@ -18,6 +18,7 @@ import { uploadImage } from "../config"
 export const createProduct = async (req, res, next) => {
 	try {
 		// kategori
+		// hapus json parse
 		const kategori_json = JSON.parse(req.body.kategori_id)
 		var kategori = []
 		kategori_json.forEach(id_kategori => {
