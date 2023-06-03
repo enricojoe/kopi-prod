@@ -521,6 +521,7 @@ export const getMyOrderDetail = async (req, res, next) => {
                 statusPembayaran: true,
                 metodePembayaran: true,
                 token: true,
+                createdAt: true,
                 orderToko: {
                     select: {
                         toko: {

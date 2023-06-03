@@ -489,7 +489,6 @@ export const getMyOrder = async (req, res, next) => {
 				total: true,
 				statusPembayaran: true,
 				metodePembayaran: true,
-				createdAt: true,
 				orderToko: {
 					select: {
 						toko: {
@@ -537,6 +536,7 @@ export const getMyOrderDetail = async (req, res, next) => {
 				statusPembayaran: true,
 				metodePembayaran: true,
 				token: true,
+				createdAt: true,
 				orderToko: {
 					select: {
 						toko: {
