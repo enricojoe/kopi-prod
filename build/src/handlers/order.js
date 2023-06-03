@@ -308,6 +308,7 @@ export const getUserOrderDetail = async (req, res, next) => {
                     select: {
                         id: true,
                         createdAt: true,
+                        statusPembayaran: true,
                         user: {
                             select: {
                                 id: true,
@@ -473,6 +474,7 @@ export const getMyOrder = async (req, res, next) => {
                 total: true,
                 statusPembayaran: true,
                 metodePembayaran: true,
+                createdAt: true,
                 orderToko: {
                     select: {
                         toko: {
