@@ -152,6 +152,14 @@ export const getProductById = async (req, res, next) => {
 						namaLengkap: true,
 						alamat: true,
 						gambar:true,
+						produk: {
+							select: {
+								id: true,
+								namaProduk: true,
+								gambar: true,
+								harga: true
+							}
+						}
 					},
 				},
 				kategori_produk: {
@@ -263,7 +271,15 @@ export const deleteProduct = async (req, res, next) => {
 
 export const searchProduct = async (req, res, next) => {
 	try {
+
+		var urut = [
+			(req.query.terbaru ? { createdAt: req.query.terbaru } : null),
+			(req.query.harga ? { harga: req.query.harga } : null),
+			(req.query.terlaris ? {terjual: req.query.terlaris } : null)
+		]
+
 		const cari = await prisma.produk.findMany({
+			orderBy: urut,
 			where: {
 				namaProduk: {
 					search: req.query.cari

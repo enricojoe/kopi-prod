@@ -36,6 +36,8 @@ model User {
   gambar          String?
   deskripsi       String?
   noTelpon        String?
+  noRekening      String?
+  bankRekening    String?
   pengunjung      Int      @default(0)
   role            ROLES[]  @default([R101])
   active          Boolean? @default(true)

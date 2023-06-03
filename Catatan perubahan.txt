@@ -23,3 +23,13 @@ coba_json.forEach(id_kategori => {
 	}
 	kategori.push(contoh_kategori)
 })
+
+03/06/2023 20:25
+Produk: 
+- Searching Filter
+- Tambah produk ketika buka produk
+
+Order: 
+- Terjual bertambah ketika pembayaran berhasil
+- POST /order/selesai/:orderTokoId
+- Status pesanan berubah ketika pembayaran dicancel atau kadaluarsa

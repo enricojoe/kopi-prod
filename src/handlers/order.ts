@@ -226,6 +226,30 @@ export const transactionResult = async (req, res, next) => {
 				}
 			})
 
+			transaksi.order.orderToko.forEach(async toko => {
+				await prisma.user.update({
+					where: {
+						id: toko.tokoId
+					},
+					data: {
+						produk: {
+							update: toko.itemOrder.map(item => {
+								return {
+									where: {
+										id: item.produkId
+									},
+									data: {
+										terjual: {
+											increment: item.kuantitas
+										}
+									}
+								}
+							})
+						}
+					}
+				})
+			})
+
 			res.status(200).json({ message: "Pembayaran Diterima" })
 		} else if (status === "cancel") {
 			await prisma.order.update({
@@ -233,7 +257,17 @@ export const transactionResult = async (req, res, next) => {
 					id: req.body.order_id
 				},
 				data: {
-					statusPembayaran: "PEMBAYARAN_DIBATALKAN"
+					statusPembayaran: "PEMBAYARAN_DIBATALKAN",
+					orderToko: {
+						updateMany: {
+							where: {
+								orderId: req.body.order_id
+							},
+							data: {
+								statusPesanan: "DIBATALKAN"
+							}
+						}
+					}
 				}
 			})
 
@@ -268,7 +302,17 @@ export const transactionResult = async (req, res, next) => {
 					id: req.body.order_id
 				},
 				data: {
-					statusPembayaran: "PEMBAYARAN_KADALUARSA"
+					statusPembayaran: "PEMBAYARAN_KADALUARSA",
+					orderToko: {
+						updateMany: {
+							where: {
+								orderId: req.body.order_id
+							},
+							data: {
+								statusPesanan: "DIBATALKAN"
+							}
+						}
+					}
 				}
 			})
 
@@ -428,6 +472,23 @@ export const cancelOrder = async (req, res, next) => {
 	}
 }
 
+export const finishOrder = async (req, res, next) => {
+	try {
+		const order = await prisma.orderToko.update({
+			where: {
+				id: req.params.orderTokoId
+			},
+			data: {
+				statusPesanan: "SELESAI"
+			}
+		})
+
+		res.status(200).json({ message: "Pesanan Selesai" })
+	} catch (e) {
+		next(e)
+	}
+}
+
 // Toko ambil semua orderan ke tokonya
 export const getMerchantOrder = async (req, res, next) => {
 	try {
@@ -489,6 +550,7 @@ export const getMyOrder = async (req, res, next) => {
 				metodePembayaran: true,
 				orderToko: {
 					select: {
+						id: true,
 						toko: {
 							select: {
 								id: true,

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createOrder, getUserOrderDetail, getMyOrderDetail, getMerchantOrder, updateOrder, cancelOrder, getMyOrder, transactionResult } from "../handlers/order"
+import { createOrder, getUserOrderDetail, getMyOrderDetail, finishOrder, getMerchantOrder, updateOrder, cancelOrder, getMyOrder, transactionResult } from "../handlers/order"
 import { loggedOn } from "../modules/auth"
 import { checkToko } from "../modules/checkRole"
 
@@ -12,6 +12,7 @@ order_router.get("/toko", loggedOn, checkToko, getMerchantOrder)
 order_router.get("/toko/:orderTokoId", loggedOn, checkToko, getUserOrderDetail)
 order_router.post("/notifikasi", transactionResult)
 order_router.patch("/update/:orderTokoId", loggedOn, checkToko, updateOrder)
-order_router.patch("/batalkan/:orderId", loggedOn, cancelOrder)
+order_router.post("/batalkan/:orderId", loggedOn, cancelOrder)
+order_router.post("/selesai/:orderTokoId", loggedOn, finishOrder)
 
 export default order_router
