@@ -432,6 +432,9 @@ export const cancelOrder = async (req, res, next) => {
 export const getMerchantOrder = async (req, res, next) => {
 	try {
 		const orderan = await prisma.orderToko.findMany({
+			orderBy: {
+                createdAt: 'desc'
+            },
 			where: {
 				tokoId: req.user.id
 			},

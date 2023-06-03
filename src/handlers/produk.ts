@@ -266,7 +266,7 @@ export const searchProduct = async (req, res, next) => {
 		const cari = await prisma.produk.findMany({
 			where: {
 				namaProduk: {
-					search: req.body.cari
+					search: req.query.cari
 				}
 			},
 			select: {
