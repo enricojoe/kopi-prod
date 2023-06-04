@@ -158,6 +158,11 @@ export const getProductById = async (req, res, next) => {
 								namaProduk: true,
 								gambar: true,
 								harga: true
+							},
+							where: {
+								NOT: {
+									id: req.params.produkId
+								}
 							}
 						}
 					},

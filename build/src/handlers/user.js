@@ -168,17 +168,6 @@ export const updateAlamat = async (req, res, next) => {
 };
 export const merchant = async (req, res, next) => {
     try {
-        // const produk = await prisma.user.findUnique({
-        // 	where: {
-        // 		id: req.user.id
-        // 	},
-        // 	select: {
-        // 		produk: true
-        // 	}
-        // })
-        // const kondisi = {
-        // 	userId: req.user.id,
-        // }
         const produk = await prisma.produk.findMany({
             where: {
                 userId: req.user.id,
