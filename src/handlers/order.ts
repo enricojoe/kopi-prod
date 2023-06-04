@@ -492,12 +492,21 @@ export const finishOrder = async (req, res, next) => {
 // Toko ambil semua orderan ke tokonya
 export const getMerchantOrder = async (req, res, next) => {
 	try {
+		// hapus
+		console.log(req.query)
+		const tanggal_min = (req.query.tanggal_min ? new Date(req.query.tanggal_min) : undefined)
+		const tanggal_max = (req.query.tanggal_max ? new Date(req.query.tanggal_max) : undefined)
 		const orderan = await prisma.orderToko.findMany({
 			orderBy: {
                 createdAt: 'desc'
             },
 			where: {
-				tokoId: req.user.id
+				tokoId: req.user.id,
+				id: req.query.order_toko_id,
+				createdAt: {
+					gte: tanggal_min,
+					lte: tanggal_max
+				}
 			},
 			select: {
 				id: true,

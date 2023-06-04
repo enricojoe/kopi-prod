@@ -184,11 +184,11 @@ export const merchant = async (req, res, next) => {
                 userId: req.user.id,
                 stok: {
                     gte: (req.query.stok_min ? parseInt(req.query.stok_min) : undefined),
-                    lt: (req.query.stok_max ? parseInt(req.query.stok_max) : undefined)
+                    lte: (req.query.stok_max ? parseInt(req.query.stok_max) : undefined)
                 },
                 terjual: {
                     gte: (req.query.terjual_min ? parseInt(req.query.terjual_min) : undefined),
-                    lt: (req.query.terjual_max ? parseInt(req.query.terjual_max) : undefined)
+                    lte: (req.query.terjual_max ? parseInt(req.query.terjual_max) : undefined)
                 },
                 namaProduk: {
                     search: req.query.nama_produk
