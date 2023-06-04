@@ -177,12 +177,55 @@ export const updateAlamat = async (req, res, next) => {
 
 export const merchant = async (req, res, next) => {
 	try {
-		const produk = await prisma.user.findUnique({
+		// const produk = await prisma.user.findUnique({
+		// 	where: {
+		// 		id: req.user.id
+		// 	},
+		// 	select: {
+		// 		produk: true
+		// 	}
+		// })
+
+		// const kondisi = {
+		// 	userId: req.user.id,
+		// }
+
+		const produk = await prisma.produk.findMany({
 			where: {
-				id: req.user.id
-			},
+				userId: req.user.id,
+				stok: {
+					gte: (req.query.stok_min ? parseInt(req.query.stok_min) : undefined),
+					lt: (req.query.stok_max ? parseInt(req.query.stok_max) : undefined)
+				},
+				terjual: {
+					gte: (req.query.terjual_min ? parseInt(req.query.terjual_min) : undefined),
+					lt: (req.query.terjual_max ? parseInt(req.query.terjual_max) : undefined)
+				},
+				namaProduk: {
+					search: req.query.nama_produk
+				},
+				kategori_produk: {
+					some: {
+						kategori: {
+							is: {
+								kategori: req.query.kategori
+							}
+						}
+					}
+				}
+			}, 
 			select: {
-				produk: true
+				id: true,
+				namaProduk: true,
+				gambar: true,
+				harga: true,
+				stok: true,
+				terjual: true,
+				kategori_produk: {
+					select: {
+						kategori: true
+					}
+				}
 			}
 		})
 
