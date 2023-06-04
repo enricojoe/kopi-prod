@@ -115,6 +115,17 @@ export const getUserProducts = async (req, res, next) => {
 			select: {
 				id: true,
 				namaLengkap: true,
+				createdAt: true,
+				deskripsi: true,
+				pengunjung: true,
+				gambar: true,
+				noTelpon: true,
+				_count: {
+					select: {
+						produk: true
+					}
+				},
+				alamat: true,
 				produk: {
 					select: {
 						id: true,
