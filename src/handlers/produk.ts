@@ -297,6 +297,7 @@ export const searchProduct = async (req, res, next) => {
 						namaLengkap: true,
 					},
 				},
+				id: true,
 				namaProduk: true,
 				gambar: true,
 				harga: true,
