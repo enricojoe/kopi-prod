@@ -1,5 +1,5 @@
 import prisma from "../db"
-
+import STATUS_PESANAN from "@prisma/client"
 import snap from "../midtrans"
 
 // item order (per produk => produk, kuantitas pesanan)
@@ -494,18 +494,51 @@ export const getMerchantOrder = async (req, res, next) => {
 	try {
 		const tanggal_min = (req.query.tanggal_min ? new Date(req.query.tanggal_min) : undefined)
 		const tanggal_max = (req.query.tanggal_max ? new Date(req.query.tanggal_max) : undefined)
+
+		var where = {}
+
+		var filter_order = {}
+		const filter_pesanan = {
+			PESANAN_DITERIMA: "PESANAN_DITERIMA",
+			PESANAN_DIPROSES: "PESANAN_DIPROSES",
+			PESANAN_DIKIRIM: "PESANAN_DIKIRIM",
+			DIBATALKAN: "DIBATALKAN",
+			SELESAI: "SELESAI",
+		}
+
+		if (req.query.urut === "perlu diproses") {
+			filter_order["statusPembayaran"] = "PEMBAYARAN_DITERIMA"
+			where['statusPesanan'] = filter_pesanan["PESANAN_DITERIMA"]
+
+		} else if (req.query.urut === "sedang dikemas") {
+			filter_order["statusPembayaran"] = "PEMBAYARAN_DITERIMA"
+			where['statusPesanan'] = filter_pesanan["PESANAN_DIPROSES"]
+
+		} else if (req.query.urut === "dalam pengiriman") {
+			filter_order["statusPembayaran"] = "PEMBAYARAN_DITERIMA"
+			where['statusPesanan'] = filter_pesanan["PESANAN_DIKIRIM"]
+
+		} else if (req.query.urut === "pesanan selesai") {
+			filter_order["statusPembayaran"] = "PEMBAYARAN_DITERIMA"
+			where['statusPesanan'] = filter_pesanan["SELESAI"]
+
+		} else if (req.query.urut === "pesanan dibatalkan") {
+			where['statusPesanan'] = filter_pesanan["DIBATALKAN"]
+		}
+
+		filter_order["id"] = req.query.order_id
+		where['tokoId'] = req.user.id
+		where['order'] = filter_order
+		where['createdAt'] = {
+			gte: tanggal_min,
+			lte: tanggal_max
+		}
+
 		const orderan = await prisma.orderToko.findMany({
 			orderBy: {
                 createdAt: 'desc'
             },
-			where: {
-				tokoId: req.user.id,
-				id: req.query.order_toko_id,
-				createdAt: {
-					gte: tanggal_min,
-					lte: tanggal_max
-				}
-			},
+			where: where,
 			select: {
 				id: true,
 				noResi: true,
