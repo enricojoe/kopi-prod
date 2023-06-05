@@ -31,22 +31,62 @@ export const getAllCategory = async (req, res, next) => {
 
 export const getCategoryProduct = async (req, res, next) => {
 	try {
-		const produk_kategori = await prisma.kategori.findUnique({
+
+		const kategori = await prisma.kategori.findUnique({
 			where: {
 				id: req.params.kategoriId
 			},
 			select: {
+				id: true,
 				kategori: true,
 				deskripsi: true,
-				gambar: true,
-				produk_kategori: {
+				gambar: true
+			}
+		})
+
+		var urut = {}
+		if (req.query.urut === "terbaru") {
+			urut["createdAt"] = "desc"
+		} else if (req.query.urut === "terlaris") {
+			urut["terjual"] = "desc"
+		} else if (req.query.urut === "termahal") {
+			urut["harga"] = "desc"
+		} else if (req.query.urut === "termurah") {
+			urut["harga"] = "asc"
+		}
+
+		const produk_kategori = await prisma.produk.findMany({
+			orderBy: urut,
+			where: {
+				kategori_produk: {
+					some: {
+						kategori: {
+							is: {
+								id: req.params.kategoriId
+							}
+						}
+					}
+				}
+			},
+			select: {
+				user: {
 					select: {
-						produk: {
+						id: true,
+						namaLengkap: true,
+					},
+				},
+				id: true,
+				namaProduk: true,
+				gambar: true,
+				harga: true,
+				kategori_produk: {
+					select: {
+						kategori: {
 							select: {
 								id: true,
-								namaProduk: true,
-								gambar: true,
-								harga: true
+								kategori: true,
+								deskripsi: true,
+								gambar: true
 							}
 						}
 					}
@@ -54,7 +94,7 @@ export const getCategoryProduct = async (req, res, next) => {
 			}
 		})
 
-		res.status(200).json({ data: produk_kategori })
+		res.status(200).json({ kategori, data: produk_kategori })
 	} catch (e) {
 		next(e)
 	}
