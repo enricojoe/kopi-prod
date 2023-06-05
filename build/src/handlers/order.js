@@ -592,7 +592,8 @@ export const getMyOrder = async (req, res, next) => {
                         toko: {
                             select: {
                                 id: true,
-                                namaLengkap: true
+                                namaLengkap: true,
+                                noTelpon: true
                             }
                         },
                         subTotal: true,
@@ -636,6 +637,7 @@ export const getMyOrderDetail = async (req, res, next) => {
                 createdAt: true,
                 user: {
                     select: {
+                        namaLengkap: true,
                         noTelpon: true,
                         alamat: true
                     }
@@ -645,7 +647,8 @@ export const getMyOrderDetail = async (req, res, next) => {
                         toko: {
                             select: {
                                 id: true,
-                                namaLengkap: true
+                                namaLengkap: true,
+                                noTelpon: true
                             }
                         },
                         noResi: true,
