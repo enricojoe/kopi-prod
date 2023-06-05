@@ -29,6 +29,37 @@ export const getAllCategory = async (req, res, next) => {
 	}
 }
 
+export const getCategoryProduct = async (req, res, next) => {
+	try {
+		const produk_kategori = await prisma.kategori.findUnique({
+			where: {
+				id: req.params.kategoriId
+			},
+			select: {
+				kategori: true,
+				deskripsi: true,
+				gambar: true,
+				produk_kategori: {
+					select: {
+						produk: {
+							select: {
+								id: true,
+								namaProduk: true,
+								gambar: true,
+								harga: true
+							}
+						}
+					}
+				}
+			}
+		})
+
+		res.status(200).json({ data: produk_kategori })
+	} catch (e) {
+		next(e)
+	}
+}
+
 export const updateCategory = async (req, res, next) => {
 	try {
 		if (req.body.gambar) {

@@ -1,5 +1,4 @@
 import prisma from "../db"
-import STATUS_PESANAN from "@prisma/client"
 import snap from "../midtrans"
 
 // item order (per produk => produk, kuantitas pesanan)
@@ -576,13 +575,36 @@ export const getMerchantOrder = async (req, res, next) => {
 
 export const getMyOrder = async (req, res, next) => {
 	try {
+
+		var where = {}
+
+		if (req.query.urut === "belum dibayar") {
+			where['statusPembayaran'] = "MENUNGGU_PEMBAYARAN"
+
+		} else if (req.query.urut === "sudah dibayar") {
+			where['statusPembayaran'] = "PEMBAYARAN_DITERIMA"
+
+		} else if (req.query.urut === "pesanan selesai") {
+			where['orderToko'] = {
+				every: {
+					statusPesanan: "SELESAI"
+				}
+			}
+
+		} else if (req.query.urut === "pesanan dibatalkan") {
+			where['orderToko'] = {
+				every: {
+					statusPesanan: "DIBATALKAN"
+				}
+			}
+		}
+
+		where['userId'] = req.user.id
 		const order = await prisma.order.findMany({
 			orderBy: {
 				createdAt: 'desc'
 			},
-			where: {
-				userId: req.user.id
-			},
+			where: where,
 			select: {
 				id: true,
 				total: true,
@@ -637,6 +659,12 @@ export const getMyOrderDetail = async (req, res, next) => {
 				metodePembayaran: true,
 				token: true,
 				createdAt: true,
+				user: {
+					select: {
+						noTelpon: true,
+						alamat: true
+					}
+				},
 				orderToko: {
 					select: {
 						toko: {

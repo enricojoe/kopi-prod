@@ -114,6 +114,7 @@ export const getUserCart = async (req, res, next) => {
             select: {
                 id: true,
                 namaLengkap: true,
+                noTelpon: true,
                 produk: {
                     where: {
                         itemKeranjang: {
@@ -143,7 +144,7 @@ export const getUserCart = async (req, res, next) => {
                 }
             }
         });
-        res.json({ data: keranjang });
+        res.status(200).json({ data: keranjang });
     }
     catch (e) {
         next(e);

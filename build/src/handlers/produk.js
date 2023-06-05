@@ -157,6 +157,7 @@ export const getProductById = async (req, res, next) => {
                         namaLengkap: true,
                         alamat: true,
                         gambar: true,
+                        noTelpon: true,
                         produk: {
                             take: 3,
                             select: {
