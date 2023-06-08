@@ -1,6 +1,6 @@
 import prisma from "../db.js";
 import snap from "../midtrans.js";
-import { getPostalCode } from "./pos.js";
+import { getPostalCode } from "../modules/pos";
 export const tes = async (req, res, next) => {
     const postalCode = await getPostalCode();
     res.json(postalCode);
