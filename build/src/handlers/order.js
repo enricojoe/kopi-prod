@@ -1,5 +1,9 @@
 import prisma from "../db.js";
 import snap from "../midtrans.js";
+import { getPostalCode } from "./pos.js";
+export const tes = async (req, res, next) => {
+    getPostalCode(req, res, next);
+};
 // item order (per produk => produk, kuantitas pesanan)
 // order (per toko dan disertai pengiriman => kumpulan item order, total/sub total, status, metode pengiriman)
 // transaksi (dengan pembayaran => kumpulan order, total keseluruhan, metode pembayaran, status)
@@ -459,12 +463,21 @@ export const cancelOrder = async (req, res, next) => {
 };
 export const finishOrder = async (req, res, next) => {
     try {
-        const order = await prisma.orderToko.update({
+        const order = await prisma.order.update({
             where: {
-                id: req.params.orderTokoId
+                id: req.params.orderId
             },
             data: {
-                statusPesanan: "SELESAI"
+                orderToko: {
+                    updateMany: {
+                        where: {
+                            orderId: req.params.orderId
+                        },
+                        data: {
+                            statusPesanan: "SELESAI"
+                        }
+                    }
+                }
             }
         });
         res.status(200).json({ message: "Pesanan Selesai" });

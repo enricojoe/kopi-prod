@@ -1,3 +1,4 @@
+export declare const tes: (req: any, res: any, next: any) => Promise<void>;
 export declare const createOrder: (req: any, res: any, next: any) => Promise<void>;
 export declare const transactionResult: (req: any, res: any, next: any) => Promise<void>;
 export declare const getUserOrderDetail: (req: any, res: any, next: any) => Promise<void>;

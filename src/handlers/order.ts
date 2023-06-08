@@ -1,5 +1,10 @@
 import prisma from "../db"
 import snap from "../midtrans"
+import { getPostalCode } from "./pos"
+
+export const tes = async (req, res, next) => {
+	getPostalCode(req, res, next)
+}
 
 // item order (per produk => produk, kuantitas pesanan)
 // order (per toko dan disertai pengiriman => kumpulan item order, total/sub total, status, metode pengiriman)
@@ -473,12 +478,21 @@ export const cancelOrder = async (req, res, next) => {
 
 export const finishOrder = async (req, res, next) => {
 	try {
-		const order = await prisma.orderToko.update({
+		const order = await prisma.order.update({
 			where: {
-				id: req.params.orderTokoId
+				id: req.params.orderId
 			},
 			data: {
-				statusPesanan: "SELESAI"
+				orderToko: {
+					updateMany: {
+						where: {
+							orderId: req.params.orderId
+						},
+						data: {
+							statusPesanan: "SELESAI"
+						}
+					}
+				}
 			}
 		})
 
