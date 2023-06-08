@@ -90,7 +90,27 @@ export const getAllProducts = async (req, res, next) => {
 				}
 			}
 		})
-		res.json({ data: produk })
+
+		const terlaris = await prisma.produk.findMany({
+			take: 10,
+			select: {
+				id: true,
+				user: {
+					select: {
+						id: true,
+						namaLengkap: true
+					}
+				},
+				namaProduk: true,
+				gambar: true,
+				harga: true,
+				terjual: true
+			},
+			orderBy: {
+				terjual: 'desc'
+			}
+		})
+		res.json({ data: produk, terlaris })
 	} catch (e) {
 		next(e)
 	}

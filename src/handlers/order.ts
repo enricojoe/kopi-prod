@@ -3,7 +3,8 @@ import snap from "../midtrans"
 import { getPostalCode } from "./pos"
 
 export const tes = async (req, res, next) => {
-	getPostalCode(req, res, next)
+	const postalCode = await getPostalCode()
+	res.json(postalCode)
 }
 
 // item order (per produk => produk, kuantitas pesanan)

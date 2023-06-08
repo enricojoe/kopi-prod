@@ -2,7 +2,8 @@ import prisma from "../db.js";
 import snap from "../midtrans.js";
 import { getPostalCode } from "./pos.js";
 export const tes = async (req, res, next) => {
-    getPostalCode(req, res, next);
+    const postalCode = await getPostalCode();
+    res.json(postalCode);
 };
 // item order (per produk => produk, kuantitas pesanan)
 // order (per toko dan disertai pengiriman => kumpulan item order, total/sub total, status, metode pengiriman)

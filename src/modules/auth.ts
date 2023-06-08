@@ -34,8 +34,7 @@ export const loggedOn = (req, res, next) => {
   const [, token] = bearer.split(' ')
 
   if (!token) {
-    res.status(401)
-    res.json({message: "Token tidak valid"})
+    res.status(401).json({message: "Token tidak valid"})
     return
   }
 

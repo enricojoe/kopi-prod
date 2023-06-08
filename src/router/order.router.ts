@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { tes, createOrder, getUserOrderDetail, getMyOrderDetail, finishOrder, getMerchantOrder, updateOrder, cancelOrder, getMyOrder, transactionResult } from "../handlers/order.js"
-import { loggedOn } from "../modules/auth.js"
-import { checkToko } from "../modules/checkRole.js"
+import { tes, createOrder, getUserOrderDetail, getMyOrderDetail, finishOrder, getMerchantOrder, updateOrder, cancelOrder, getMyOrder, transactionResult } from "../handlers/order"
+import { loggedOn } from "../modules/auth"
+import { checkToko } from "../modules/checkRole"
 
 const order_router = Router()
 
