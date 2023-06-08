@@ -86,7 +86,7 @@ export const getAllProducts = async (req, res, next) => {
             }
         });
         const terlaris = await prisma.produk.findMany({
-            take: 10,
+            take: 6,
             select: {
                 id: true,
                 user: {
