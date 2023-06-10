@@ -1,5 +1,4 @@
 import prisma from "../db"
-
 import { uploadImage } from "../config"
 
 // ==Hanya untuk toko dan koperasi==

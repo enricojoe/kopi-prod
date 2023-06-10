@@ -1,6 +1,7 @@
 import prisma from "../db.js";
 import snap from "../midtrans.js";
-import { getPostalCode } from "../modules/pos";
+import { getPostalCode } from "../modules/pos.js";
+import { createNotification } from "./notifikasi.js";
 export const tes = async (req, res, next) => {
     const postalCode = await getPostalCode();
     res.json(postalCode);
@@ -92,15 +93,22 @@ export const createOrder = async (req, res, next) => {
                 biayaTransaksi: true,
                 biayaLayanan: true,
                 metodePembayaran: true,
+                statusPembayaran: true,
                 orderToko: {
                     select: {
+                        orderId: true,
                         tokoId: true,
                         subTotal: true,
                         itemOrder: {
                             select: {
                                 produkId: true,
                                 kuantitas: true,
-                                subTotal: true
+                                subTotal: true,
+                                produk: {
+                                    select: {
+                                        gambar: true
+                                    }
+                                }
                             }
                         }
                     }
@@ -153,7 +161,28 @@ export const createOrder = async (req, res, next) => {
                 });
             });
         }
-        res.json({ data: order });
+        var isi = {};
+        order.orderToko.map(toko => {
+            isi = {
+                judul: "Pesanan Diterima",
+                pesan: `Pesanan ${order.id} diterima, namun status pesanan ${order.statusPembayaran}`,
+                gambar: toko.itemOrder[0].produk.gambar[0],
+                jenis: "TRANSAKSI",
+                penerimaId: toko.tokoId,
+                orderId: toko.orderId
+            };
+            createNotification(isi);
+        });
+        isi = {
+            judul: "Pesanan Berhasil Dibuat",
+            pesan: `Pesanan ${order.id} berhasil dibuat, lakukan pembayaran segera`,
+            gambar: order.orderToko[0].itemOrder[0].produk.gambar[0],
+            jenis: "TRANSAKSI",
+            penerimaId: req.user.id,
+            orderId: order.id
+        };
+        createNotification(isi);
+        res.json({ data: order, message: "Pesanan berhasil dibuat" });
     }
     catch (e) {
         next(e);
