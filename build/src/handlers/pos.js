@@ -1,4 +1,4 @@
-import { getFee } from "../modules/pos";
+import { getFee } from "../modules/pos.js";
 export const getPosFee = async (req, res, next) => {
     try {
         const fee = await getFee();
