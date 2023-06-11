@@ -40,4 +40,23 @@ export const getPostalCode = async () => {
     });
     return postalCode;
 };
+export const getFee = async () => {
+    const token = await getToken();
+    const data = {
+        'grant_type': 'client_credentials'
+    };
+    const headers = {
+        'Authorization': "Bearer " + token.access_token,
+        'Content-Type': "application/x-www-form-urlencoded"
+    };
+    const fee = await instance
+        .post("/utilitas/1.0.1/getFee", data, { headers })
+        .then(res => {
+        return res.data;
+    })
+        .catch(e => {
+        console.log("=");
+    });
+    return fee;
+};
 //# sourceMappingURL=pos.js.map
