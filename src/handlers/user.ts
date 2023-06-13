@@ -29,15 +29,20 @@ export const createNewUser = async (req, res, next) => {
 				namaLengkap: req.body.nama_lengkap,
 				noIndukKoperasi: req.body.no_induk_koperasi,
 				jenisAkun: req.body.jenis_akun,
-				role: role
+				role: role,
+				alamat: {
+					create: {
+						provinsi: ""
+					}
+				},
+				keranjang: {
+					create: {
+						total: 0
+					}
+				}
 			}
 		})
 
-    const keranjang = await prisma.keranjang.create({
-    	data: {
-        	userId: user.id,
-    	},
-    });
 		const token = createJWT(user)
 		
 		res.status(200).json({ token })
@@ -90,6 +95,7 @@ export const profile = async (req, res, next) => {
       },
       include: {
         alamat: true,
+        keranjang: true
       },
     });
 

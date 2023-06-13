@@ -33,3 +33,8 @@ Order:
 - Terjual bertambah ketika pembayaran berhasil
 - POST /order/selesai/:orderTokoId
 - Status pesanan berubah ketika pembayaran dicancel atau kadaluarsa
+
+13/06/2023
+Produk:
+- Toko harus sudah ada alamat terlebih dahulu untuk menambah produk
+- Pembeli harus sudah ada alamat terlebih dahulu untuk membuat pesanan

@@ -57,6 +57,7 @@ export const createOrder = async (req, res, next) => {
 			}
 		})
 
+		const ongkir = req.body.ongkir
 		var total = 0
         var jumlah_toko = toko_produk.length
 		const order_toko = toko_produk.map(toko => {
@@ -73,6 +74,7 @@ export const createOrder = async (req, res, next) => {
 			return {
 				tokoId: toko.id,
 				subTotal: subTotalToko,
+				ongkosKirim: ongkir[toko.id],
 				itemOrder: {
 					create: list_item
 				}
@@ -484,6 +486,7 @@ export const finishOrder = async (req, res, next) => {
 				id: req.params.orderId
 			},
 			data: {
+				statusPembayaran: "SELESAI",
 				orderToko: {
 					updateMany: {
 						where: {
