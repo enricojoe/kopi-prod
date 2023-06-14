@@ -14,6 +14,26 @@ datasource db {
   url      = env("DEV_SIKOPI_DATABASE_URL")
 }
 
+model Provinsi {
+  kode String @id
+  provinsi String
+
+  kabupaten Kabupaten[]
+}
+
+// type,regency,province_code,,code
+
+
+model Kabupaten {
+  kode String @id
+  tipe String
+  kabupaten String
+
+  provinsiCode String
+  provinsi Provinsi @relation(fields: [provinsiId], references: [kode])
+
+}
+
 // model Admin {
 //   id         String    @id @unique @default(cuid())
 //   createdAt  DateTime  @default(now())

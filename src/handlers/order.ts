@@ -393,6 +393,7 @@ export const getUserOrderDetail = async (req, res, next) => {
 						},
 					}
 				},
+				ongkosKirim: true,
 				noResi: true,
 				subTotal: true,
 				statusPesanan: true,
