@@ -58,9 +58,13 @@ export const createOrder = async (req, res, next) => {
 		})
 
 		const ongkir = req.body.ongkir
+
 		var total = 0
         var jumlah_toko = toko_produk.length
 		const order_toko = toko_produk.map(toko => {
+			const result = ongkir.filter(obj => {
+			  	return obj.id_toko === toko.id
+			})
 			var subTotalToko = 0
 			var list_item = toko.produk.map(item => {
 				subTotalToko += item.itemKeranjang[0].subTotal
@@ -74,7 +78,7 @@ export const createOrder = async (req, res, next) => {
 			return {
 				tokoId: toko.id,
 				subTotal: subTotalToko,
-				ongkosKirim: ongkir[toko.id],
+				ongkosKirim: result[0]["ongkir"],
 				itemOrder: {
 					create: list_item
 				}
@@ -696,6 +700,7 @@ export const getMyOrderDetail = async (req, res, next) => {
 						},
 						noResi: true,
 						subTotal: true,
+						ongkosKirim: true,
 						statusPesanan: true,
 						itemOrder: {
 							select: {
