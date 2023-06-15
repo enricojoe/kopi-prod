@@ -21,17 +21,36 @@ model Provinsi {
   kabupaten Kabupaten[]
 }
 
-// type,regency,province_code,,code
-
-
 model Kabupaten {
   kode String @id
+  kodeKabupaten String
   tipe String
   kabupaten String
 
-  provinsiCode String
-  provinsi Provinsi @relation(fields: [provinsiId], references: [kode])
+  kodeProvinsi String
+  provinsi Provinsi @relation(fields: [kodeProvinsi], references: [kode])
 
+  kecamatan Kecamatan[]
+}
+
+model Kecamatan {
+  kode String @id
+  kodeKecamatan String
+  kecamatan String
+
+  kodeKabupaten String
+  kabupaten Kabupaten @relation(fields: [kodeKabupaten], references: [kode])
+
+  desa Desa[]
+}
+
+model Desa {
+  kode String @id
+  kodeDesa String
+  desa String
+
+  kodeKecamatan String
+  kecamatan Kecamatan @relation(fields: [kodeKecamatan], references: [kode])
 }
 
 // model Admin {
