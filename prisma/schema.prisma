@@ -53,21 +53,21 @@ model Desa {
   kecamatan Kecamatan @relation(fields: [kodeKecamatan], references: [kode])
 }
 
-// model Admin {
-//   id         String    @id @unique @default(cuid())
-//   createdAt  DateTime  @default(now())
-//   modifiedAt DateTime? @default(now()) @updatedAt
+model Admin {
+  id         String    @id @unique @default(cuid())
+  createdAt  DateTime  @default(now())
+  modifiedAt DateTime? @default(now()) @updatedAt
 
-//   username String @unique
-//   password String
-// }
+  username String @unique
+  password String
+}
 
 model User {
   id         String    @id @unique @default(cuid())
   createdAt  DateTime  @default(now())
   modifiedAt DateTime? @default(now()) @updatedAt
 
-  username        String   @unique
+  username        String  @unique
   password        String
   namaLengkap     String
   jenisAkun       String
@@ -77,15 +77,16 @@ model User {
   noTelpon        String?
   noRekening      String?
   bankRekening    String?
-  pengunjung      Int      @default(0)
-  role            ROLES[]  @default([R101])
-  active          Boolean? @default(true)
+  pengunjung      Int     @default(0)
+  role            ROLES[] @default([R101])
+  active          Boolean @default(true)
 
-  alamat    Alamat?
-  keranjang Keranjang?
-  produk    Produk[]
-  order     Order[]
-  orderToko OrderToko[]
+  alamat     Alamat?
+  keranjang  Keranjang?
+  produk     Produk[]
+  order      Order[]
+  orderToko  OrderToko[]
+  Notifikasi Notifikasi[]
 }
 
 enum ROLES {
@@ -110,6 +111,25 @@ model Alamat {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model Notifikasi {
+  id         String   @id @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now()) @updatedAt
+
+  judul       String
+  pesan       String
+  gambar      String
+  jenis       JENIS_NOTIFIKASI
+  sudahDibaca Boolean          @default(false)
+  urgensi     String           @default("Tinggi")
+
+  penerimaId String
+  penerima   User   @relation(fields: [penerimaId], references: [id])
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Produk {
@@ -242,6 +262,7 @@ model Order {
 
   orderToko      OrderToko[]
   transaksiOrder TransaksiOrder?
+  notifikasi     Notifikasi[]
 }
 
 model TransaksiOrder {
@@ -277,6 +298,13 @@ enum STATUS_PEMBAYARAN {
   PEMBAYARAN_DITERIMA
   PEMBAYARAN_DIBATALKAN
   PEMBAYARAN_KADALUARSA
+  SELESAI
+}
+
+enum JENIS_NOTIFIKASI {
+  INFO
+  PROMO
+  TRANSAKSI
 }
 
 // model RiwayatOrder {

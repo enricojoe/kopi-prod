@@ -170,7 +170,7 @@ export const createOrder = async (req, res, next) => {
 			})
 		}
 
-		res.json({ data : order })
+		res.json({ data : order, message: "Pesanan berhasil dibuat" })
 	} catch (e) {
 		next(e)
 	}

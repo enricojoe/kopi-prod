@@ -33,7 +33,6 @@ export const getPostalCode = async () => {
 			'Authorization': "Bearer " + token.access_token,
 			'Content-Type': "application/x-www-form-urlencoded"
 		}
-		console.log(token)
 		const postalCode = await instance
 														.post("/utilitas/1.0.1/getPostalCode", data, {headers})
 														.then(res => {
