@@ -54,6 +54,7 @@ export const createOrder = async (req, res, next) => {
             }
         });
         const ongkir = req.body.ongkir;
+        var total_ongkir = 0;
         var total = 0;
         var jumlah_toko = toko_produk.length;
         const order_toko = toko_produk.map(toko => {
@@ -70,6 +71,7 @@ export const createOrder = async (req, res, next) => {
                 };
             });
             total += subTotalToko;
+            total_ongkir += result[0]["ongkir"];
             return {
                 tokoId: toko.id,
                 subTotal: subTotalToko,
@@ -101,6 +103,7 @@ export const createOrder = async (req, res, next) => {
                     select: {
                         tokoId: true,
                         subTotal: true,
+                        ongkosKirim: true,
                         itemOrder: {
                             select: {
                                 produkId: true,
@@ -135,7 +138,7 @@ export const createOrder = async (req, res, next) => {
                 }
             });
         });
-        total = order.total + order.biayaLayanan + order.biayaTransaksi + (20000 * jumlah_toko);
+        total = order.total + order.biayaLayanan + order.biayaTransaksi + total_ongkir;
         if (order.metodePembayaran !== "COD") {
             const parameter = {
                 transaction_details: {
