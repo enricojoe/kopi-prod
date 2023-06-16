@@ -1,11 +1,33 @@
 import { PrismaClient } from '@prisma/client';
+import provinsi from "./seeds/provinsi"
+import kabupaten from "./seeds/kabupaten"
+import kecamatan from "./seeds/kecamatan"
+import desa from "./seeds/desa"
 const prisma = new PrismaClient();
 
 async function main() {
     // Do stuff
-    // await prisma.playlist.createMany({
-    //    data: playlists,
-    // });
+    const data_provinsi = await provinsi()
+    await prisma.provinsi.createMany({
+       data: data_provinsi
+    });
+
+    const data_kabupaten = await kabupaten()
+    await prisma.kabupaten.createMany({
+        data: data_kabupaten
+    })
+
+    const data_kecamatan = await kecamatan()
+    await prisma.kecamatan.createMany({
+        data: data_kecamatan
+    })
+
+    const data_desa = await desa()
+    await prisma.desa.createMany({
+        data: data_desa
+    })
+
+    console.log("Seed berhasil")
 }
 
 main()

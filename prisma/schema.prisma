@@ -47,6 +47,7 @@ model Kecamatan {
 model Desa {
   kode String @id
   kodeDesa String
+  kodePos String
   desa String
 
   kodeKecamatan String
