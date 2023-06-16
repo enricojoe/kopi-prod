@@ -1,23 +1,26 @@
 import { parse } from "csv-parse";
 import fs from "fs";
 export default async () => {
-    var list_provinsi = [];
+    var list_desa = [];
     await new Promise((resolve, reject) => {
-        fs.createReadStream("./prisma/seeds/files/provinces.csv")
+        fs.createReadStream("./prisma/seeds/files/villages.csv")
             .pipe(parse({ from_line: 2, delimiter: ',' }))
             .on('data', row => {
-            list_provinsi.push({
-                kode: row[1],
-                provinsi: row[0]
+            list_desa.push({
+                kode: row[6],
+                kodeDesa: row[5],
+                kodePos: row[0],
+                desa: row[1],
+                kodeKecamatan: row[7],
             });
         })
             .on('end', () => {
-            resolve(list_provinsi);
+            resolve(list_desa);
         })
             .on('error', error => {
             reject(error);
         });
     });
-    return list_provinsi;
+    return list_desa;
 };
-//# sourceMappingURL=provinsi.js.map
+//# sourceMappingURL=desa.js.map

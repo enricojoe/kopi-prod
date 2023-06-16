@@ -5,6 +5,7 @@ import keranjang_router from "./keranjang.router.js";
 import kategori_router from "./kategori.router.js";
 import order_router from "./order.router.js";
 import pos_router from "./pos.router.js";
+import wilayah_router from "./wilayah.router.js";
 import { userErrorHandler, prismaErrorHandler } from "../handlers/error.js";
 const router = Router();
 router.use("/user", user_router, prismaErrorHandler, userErrorHandler);
@@ -13,5 +14,6 @@ router.use("/keranjang", keranjang_router);
 router.use("/kategori", kategori_router);
 router.use("/order", order_router);
 router.use("/pos", pos_router);
+router.use("/wilayah", wilayah_router);
 export default router;
 //# sourceMappingURL=index.js.map
