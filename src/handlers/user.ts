@@ -143,7 +143,7 @@ export const updateProfile = async (req, res, next) => {
 // - provinsi: req.body.provinsi
 // - kabupaten: req.body.kabupaten
 // - kecamatan: req.body.kecamatan
-// - kodePos: req.body.kode_post
+// - kodePos: req.body.kode_pos
 // - detailAlamat: req.body.detail_alamat
 // - latitude: req.body.latitude
 // - longitude: req.body.longitude
@@ -159,7 +159,7 @@ export const updateAlamat = async (req, res, next) => {
         provinsi: req.body.provinsi,
         kabupaten: req.body.kabupaten,
         kecamatan: req.body.kecamatan,
-        kodePos: req.body.kode_post,
+        kodePos: req.body.kode_pos,
         detailAlamat: req.body.detail_alamat,
         latitude: req.body.latitude,
         longitude: req.body.longitude,
@@ -169,7 +169,7 @@ export const updateAlamat = async (req, res, next) => {
         provinsi: req.body.provinsi,
         kabupaten: req.body.kabupaten,
         kecamatan: req.body.kecamatan,
-        kodePos: req.body.kode_post,
+        kodePos: req.body.kode_pos,
         detailAlamat: req.body.detail_alamat,
         latitude: req.body.latitude,
         longitude: req.body.longitude,

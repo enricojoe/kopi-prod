@@ -12,11 +12,14 @@ export const getProvinces = async (req, res, next) => {
 
 export const getRegencies = async (req, res, next) => {
 	try {
-		const kabupaten = await prisma.kabupaten.findMany({
-			where: {
-				kodeProvinsi: req.query.provinsi
-			}
-		})
+		var kabupaten = []
+		if (req.query.provinsi !== undefined){
+			kabupaten = await prisma.kabupaten.findMany({
+				where: {
+					kodeProvinsi: req.query.provinsi
+				}
+			})
+		}
 
 		res.status(200).json({ data: kabupaten })
 	} catch (e) {
@@ -26,11 +29,14 @@ export const getRegencies = async (req, res, next) => {
 
 export const getDistricts = async (req, res, next) => {
 	try {
-		const kecamatan = await prisma.kecamatan.findMany({
-			where: {
-				kodeKabupaten: req.query.kabupaten
-			}
-		})
+		var kecamatan = []
+		if (req.query.kabupaten !== undefined){
+			kecamatan = await prisma.kecamatan.findMany({
+				where: {
+					kodeKabupaten: req.query.kabupaten
+				}
+			})
+		}
 
 		res.status(200).json({ data: kecamatan })
 	} catch (e) {
@@ -40,11 +46,14 @@ export const getDistricts = async (req, res, next) => {
 
 export const getVillages = async (req, res, next) => {
 	try {
-		const desa = await prisma.desa.findMany({
-			where: {
-				kodeKecamatan: req.query.kecamatan
-			}
-		})
+		var desa = []
+		if (req.query.kecamatan !== undefined) {
+			desa = await prisma.desa.findMany({
+				where: {
+					kodeKecamatan: req.query.kecamatan
+				}
+			})
+		}
 
 		res.status(200).json({ data: desa })
 	} catch (e) {
