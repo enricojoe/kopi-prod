@@ -1,9 +1,10 @@
 import prisma from "../db"
+import redis from "../modules/redis"
 
 export const getProvinces = async (req, res, next) => {
 	try {
 		const provinsi = await prisma.provinsi.findMany()
-
+		redis.caching(req.originalUrl, provinsi)
 		res.status(200).json({ data: provinsi })
 	} catch (e) {
 		next(e)
@@ -17,7 +18,7 @@ export const getRegencies = async (req, res, next) => {
 				kodeProvinsi: req.query.provinsi
 			}
 		})
-
+		redis.caching(req.originalUrl, kabupaten)
 		res.status(200).json({ data: kabupaten })
 	} catch (e) {
 		next(e)
@@ -31,7 +32,7 @@ export const getDistricts = async (req, res, next) => {
 				kodeKabupaten: req.query.kabupaten
 			}
 		})
-
+		redis.caching(req.originalUrl, kecamatan)
 		res.status(200).json({ data: kecamatan })
 	} catch (e) {
 		next(e)
@@ -45,7 +46,7 @@ export const getVillages = async (req, res, next) => {
 				kodeKecamatan: req.query.kecamatan
 			}
 		})
-
+		redis.caching(req.originalUrl, desa)
 		res.status(200).json({ data: desa })
 	} catch (e) {
 		next(e)
