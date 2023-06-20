@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import provinsi from "./seeds/provinsi.js";
-import kabupaten from "./seeds/kabupaten.js";
-import kecamatan from "./seeds/kecamatan.js";
-import desa from "./seeds/desa.js";
+import provinsi from "./seeds/provinsi";
+import kabupaten from "./seeds/kabupaten";
+import kecamatan from "./seeds/kecamatan";
+import desa from "./seeds/desa";
 const prisma = new PrismaClient();
 async function main() {
     // Do stuff

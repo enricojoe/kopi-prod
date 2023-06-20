@@ -1,4 +1,5 @@
 import prisma from "../db.js";
+import redis from "../modules/redis.js";
 import { uploadImage } from "../config.js";
 export const createCategory = async (req, res, next) => {
     try {
@@ -19,7 +20,8 @@ export const createCategory = async (req, res, next) => {
 export const getAllCategory = async (req, res, next) => {
     try {
         const kategori = await prisma.kategori.findMany();
-        res.json({ data: kategori });
+        redis.caching(req.originalUrl, kategori);
+        res.status(200).json({ data: kategori });
     }
     catch (e) {
         next(e);
@@ -89,7 +91,8 @@ export const getCategoryProduct = async (req, res, next) => {
                 }
             }
         });
-        res.status(200).json({ kategori, data: produk_kategori });
+        redis.caching(req.originalUrl, { kategori, produk_kategori });
+        res.status(200).json({ data: { kategori, produk_kategori } });
     }
     catch (e) {
         next(e);

@@ -1,5 +1,6 @@
 import prisma from "../db.js";
 import { uploadImage } from "../config.js";
+import redis from "../modules/redis.js";
 // ==Hanya untuk toko dan koperasi==
 // Untuk menambah produk
 // Request: 
@@ -104,7 +105,9 @@ export const getAllProducts = async (req, res, next) => {
                 terjual: 'desc'
             }
         });
-        res.json({ data: produk, terlaris });
+        // redis.delCache(req.originalUrl)
+        redis.caching(req.originalUrl, { produk, terlaris });
+        res.status(200).json({ data: { produk, terlaris } });
     }
     catch (e) {
         next(e);
@@ -151,7 +154,8 @@ export const getUserProducts = async (req, res, next) => {
                 }
             }
         });
-        res.json({ data: user });
+        redis.caching(req.originalUrl, user);
+        res.status(200).json({ data: user });
     }
     catch (e) {
         next(e);
@@ -200,7 +204,8 @@ export const getProductById = async (req, res, next) => {
                 }
             }
         });
-        res.json({ data: produk });
+        redis.caching(req.originalUrl, produk);
+        res.status(200).json({ data: produk });
     }
     catch (e) {
         next(e);
@@ -268,7 +273,7 @@ export const updateProduct = async (req, res, next) => {
                 }
             }
         });
-        res.json({ data: updated });
+        res.status(200).json({ data: updated });
     }
     catch (e) {
         next(e);
@@ -286,7 +291,7 @@ export const deleteProduct = async (req, res, next) => {
                 id: req.params.produkId
             }
         });
-        res.json({ data: deleted });
+        res.status(200).json({ data: deleted });
     }
     catch (e) {
         next(e);
@@ -339,7 +344,8 @@ export const searchProduct = async (req, res, next) => {
                 }
             }
         });
-        res.json({ data: cari });
+        redis.caching(req.originalUrl, cari);
+        res.status(200).json({ data: cari });
     }
     catch (e) {
         next(e);
