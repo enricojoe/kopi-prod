@@ -23,7 +23,8 @@ const getToken = async () => {
 		return token
 }
 
-export const getPostalCode = async () => {
+export default {
+	getPostalCode: async () => {
 		const token = await getToken()
 
 		const data = {
@@ -41,15 +42,34 @@ export const getPostalCode = async () => {
 														.catch(e => {
 															console.log("=")
 														})
-		return postalCode	
-}
-
-export const getFee = async () => {
+		return postalCode
+	},
+	getFee: async ({
+	 kode_pos_pengirim,
+	 kode_pos_penerima, 
+	 berat, 
+	 panjang=0, 
+	 lebar=0, 
+	 tinggi=0,
+	 diameter=0,
+	 harga
+	}) => {
 		const token = await getToken()
 
 		const data = {
-				'grant_type': 'client_credentials'
+				'customerid': 'DUMMY05400A',
+				'desttypeid': '1',
+				'itemtypeid': '1',
+				'shipperzipcode': kode_pos_pengirim,
+				'receiverzipcode': kode_pos_penerima,
+				'weight': berat,
+				'length': panjang,
+				'width': lebar,
+				'height': tinggi,
+				'diameter': diameter,
+				'valuegoods': harga
 		}
+		console.log(data)
 		const headers = {
 			'Authorization': "Bearer " + token.access_token,
 			'Content-Type': "application/x-www-form-urlencoded"
@@ -62,5 +82,42 @@ export const getFee = async () => {
 														.catch(e => {
 															console.log("=")
 														})
-		return fee	
+		return fee
+	},
+	addPostingDoc: async ({
+		order_toko_id,
+		alamat_pengirim,
+		alamat_penerima,
+		detail_item,
+		detail_pembayaran,
+		pajak,
+		layanan
+	}) => {
+		const token = await getToken()
+
+		const data = {
+				'userid': 1,
+				'memberid': 'DUMMY05400A',
+				'orderid': order_toko_id,
+				'addresses': [alamat_pengirim, alamat_penerima],
+				'itemproperties': detail_item,
+				'paymentvalues': detail_pembayaran,
+				'taxes': pajak,
+				'services': layanan
+		}
+		console.log(data)
+		const headers = {
+			'Authorization': "Bearer " + token.access_token,
+			'Content-Type': "application/json"
+		}
+		const fee = await instance
+														.post("/webhookpos/1.0.1/AddPostingDoc", data, {headers})
+														.then(res => {
+															return res.data
+														})
+														.catch(e => {
+															console.log(e)
+														})
+		return fee
+	}
 }

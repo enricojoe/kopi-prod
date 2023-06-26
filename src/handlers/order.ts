@@ -1,9 +1,16 @@
 import prisma from "../db"
 import snap from "../midtrans"
-import { getPostalCode, getFee } from "../modules/pos"
+import pos from "../modules/pos"
+import { addPostingDoc } from "./pos"
 
 export const tes = async (req, res, next) => {
-	const postalCode = await getFee()
+	const detail_barang = {
+		kode_pos_pengirim: '34581',
+		kode_pos_penerima: '34511',
+		berat: 10,
+		harga: 10000
+	}
+	const postalCode = await pos.getFee(detail_barang)
 	res.json(postalCode)
 }
 
@@ -106,9 +113,17 @@ export const createOrder = async (req, res, next) => {
 				metodePembayaran: true,
 				orderToko: {
 					select: {
+						id: true,
 						tokoId: true,
 						subTotal: true,
 						ongkosKirim: true,
+						toko: {
+							select: {
+								namaLengkap: true,
+								noTelpon: true,
+								alamat: true
+							}
+						},
 						itemOrder: {
 							select: {
 								produkId: true,
@@ -169,6 +184,9 @@ export const createOrder = async (req, res, next) => {
 				})
 			})
 		}
+		req.order = order
+
+		addPostingDoc(req, res)
 
 		res.json({ data : order, message: "Pesanan berhasil dibuat" })
 	} catch (e) {
