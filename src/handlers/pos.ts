@@ -18,7 +18,7 @@ export const getPosFee = async (req, res, next) => {
 			}
 			var fee = await pos.getFee(detail_barang)
 			ongkir.push({
-				id_toko: toko_produk[i].id,
+				id: toko_produk[i].id,
 				ongkir: fee.rs_fee.r_fee
 			})
 		}
