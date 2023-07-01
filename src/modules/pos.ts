@@ -96,14 +96,14 @@ export default {
 		const token = await getToken()
 
 		const data = {
-				'userid': 1,
-				'memberid': 'DUMMY05400A',
-				'orderid': order_toko_id,
-				'addresses': [alamat_pengirim, alamat_penerima],
-				'itemproperties': detail_item,
-				'paymentvalues': detail_pembayaran,
-				'taxes': pajak,
-				'services': layanan
+				"userid": 1,
+				"memberid": 'DUMMY05400A',
+				"orderid": order_toko_id,
+				"addresses": [alamat_pengirim, alamat_penerima],
+				"itemproperties": detail_item,
+				"paymentvalues": detail_pembayaran,
+				"taxes": pajak,
+				"services": layanan
 		}
 		console.log(data)
 		const headers = {
@@ -115,8 +115,23 @@ export default {
 														.then(res => {
 															return res.data
 														})
-														.catch(e => {
-															console.log(e)
+														.catch(error => {
+															if (error.response) {
+													      // The request was made and the server responded with a status code
+													      // that falls out of the range of 2xx
+													      console.log(error.response.data);
+													      console.log(error.response.status);
+													      console.log(error.response.headers);
+													    } else if (error.request) {
+													      // The request was made but no response was received
+													      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+													      // http.ClientRequest in node.js
+													      console.log(error.request);
+													    } else {
+													      // Something happened in setting up the request that triggered an Error
+													      console.log('Error', error.message);
+													    }
+													    console.log(error.config);
 														})
 		return fee
 	}

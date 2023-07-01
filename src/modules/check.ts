@@ -6,10 +6,6 @@ import prisma from "../db"
 // 	}
 // }
 
-// export const checkKeranjang = (req, res, next) => {
-// 	if (req.)
-// }
-
 export const checkToko = (req, res, next) => {
 	if (req.user.role.includes("R102")) {
 		next()
@@ -36,3 +32,41 @@ export const checkAlamat = async (req, res, next) => {
 		next(e)
 	}
 }
+// console.log(JSON.stringify(produk, null, 2))
+// export const checkStok = async (req, res, next) => {
+// 	try {
+// 		const id_produk = req.body.id_produk_keranjang
+// 		const produk = await prisma.produk.findMany({
+// 			where: {
+// 				id: {
+// 					in: id_produk
+// 				}
+// 			},
+// 			select: {
+// 				id: true,
+// 				stok: true,
+// 				itemKeranjang: {
+// 					where: {
+// 						Keranjang: {
+// 							userId: req.user.id
+// 						}
+// 					},
+// 					select: {
+// 						kuantitas: true
+// 					}
+// 				}
+// 			}
+// 		})
+// 		produk.forEach(item => {
+// 			if ( item.stok - item.itemKeranjang[0].kuantitas < 0 ) {
+// 				console.log("Tidak bisa brooo")
+// 			} else {
+// 				console.log("Bisa")
+// 			}
+// 		})
+
+// 		next()
+// 	} catch (e) {
+// 		next(e)
+// 	}
+// }

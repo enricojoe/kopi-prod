@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ItemKeranjang" ADD COLUMN     "totalBerat" DOUBLE PRECISION NOT NULL DEFAULT 0;

@@ -23,6 +23,7 @@ export const getAllCategory = async (req, res, next) => {
 	try {
 		const kategori = await prisma.kategori.findMany()
 		redis.caching(req.originalUrl, kategori)
+		redis.setExpire(req.originalUrl, 60*60)
 		res.status(200).json({ data: kategori })
 	} catch (e) {
 		next(e)
@@ -94,6 +95,7 @@ export const getCategoryProduct = async (req, res, next) => {
 			}
 		})
 		redis.caching(req.originalUrl, {kategori, produk_kategori})
+		redis.setExpire(req.originalUrl)
 		res.status(200).json({ data: {kategori, produk_kategori} })
 	} catch (e) {
 		next(e)

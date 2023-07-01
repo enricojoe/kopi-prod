@@ -145,10 +145,10 @@ model Produk {
   harga      Float
   stok       Int
   terjual    Int      @default(0)
-  berat      Int      @default(0)
-  panjang    Int      @default(0)
-  tinggi     Int      @default(0)
-  lebar      Int      @default(0)
+  berat      Float      @default(0)
+  panjang    Float      @default(0)
+  tinggi     Float      @default(0)
+  lebar      Float      @default(0)
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -188,6 +188,7 @@ model ItemKeranjang {
 
   kuantitas Int   @default(0)
   subTotal  Float @default(0)
+  totalBerat Float @default(0)
 
   produkId String
   produk   Produk @relation(fields: [produkId], references: [id], onDelete: Cascade)
@@ -242,6 +243,7 @@ model OrderToko {
   ongkosKirim   Float          @default(0)
   subTotal      Float          @default(0)
   statusPesanan STATUS_PESANAN @default(PESANAN_DITERIMA)
+  totalBerat Float @default(0)
 
   itemOrder ItemOrder[]
 }

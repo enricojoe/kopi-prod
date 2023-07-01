@@ -111,8 +111,8 @@ export const getAllProducts = async (req, res, next) => {
 			}
 		})
 
-		// redis.delCache(req.originalUrl)
 		redis.caching(req.originalUrl, { produk, terlaris })
+		redis.setExpire(req.originalUrl)
 		res.status(200).json({ data: {produk, terlaris} })
 	} catch (e) {
 		next(e)
@@ -161,6 +161,7 @@ export const getUserProducts = async (req, res, next) => {
 			}
 		})
 		redis.caching(req.originalUrl, user)
+		redis.setExpire(req.originalUrl)
 		res.status(200).json({ data: user })
 	} catch (e) {
 		next(e)
@@ -211,6 +212,7 @@ export const getProductById = async (req, res, next) => {
 			}
 		})
 		redis.caching(req.originalUrl, produk)
+		redis.setExpire(req.originalUrl)
 		res.status(200).json({ data: produk })
 	} catch (e) {
 		next(e)
@@ -231,7 +233,6 @@ export const getProductById = async (req, res, next) => {
 // - Data produk yang dihapus
 export const updateProduct = async (req, res, next) => {
 	try {
-
 		// gambar
 		var image = undefined
 		if ( req.body.gambar_produk !== undefined ){
@@ -261,7 +262,6 @@ export const updateProduct = async (req, res, next) => {
 			})
 		}
 	
-
 		const updated = await prisma.produk.update({
 			where: {
 				id: req.params.produkId
@@ -286,6 +286,7 @@ export const updateProduct = async (req, res, next) => {
 			}
 		})
 
+		redis.delCache(`/produk/ambil/${updated.id}`)
 		res.status(200).json({ data: updated })
 	} catch (e) {
 		next(e)
@@ -302,9 +303,13 @@ export const deleteProduct = async (req, res, next) => {
 		const deleted = await prisma.produk.delete({
 			where: {
 				id: req.params.produkId
+			},
+			select: {
+				id: true
 			}
 		})
 
+		redis.delCache(`/produk/ambil/${deleted.id}`)
 		res.status(200).json({ data: deleted })
 	} catch (e) {
 		next(e)
@@ -360,6 +365,7 @@ export const searchProduct = async (req, res, next) => {
 		})
 
 		redis.caching(req.originalUrl, cari)
+		redis.setExpire(req.originalUrl)
 		res.status(200).json({ data: cari })
 	} catch (e) {
 		next(e)

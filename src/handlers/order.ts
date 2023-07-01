@@ -1,6 +1,7 @@
 import prisma from "../db"
 import snap from "../midtrans"
 import pos from "../modules/pos"
+import redis from "../modules/redis"
 import { addPostingDoc } from "./pos"
 
 export const tes = async (req, res, next) => {
@@ -48,6 +49,7 @@ export const createOrder = async (req, res, next) => {
 					},
 					select: {
 						id: true,
+						berat: true,
 						itemKeranjang: {
 							where: {
 								Keranjang: {
@@ -73,12 +75,14 @@ export const createOrder = async (req, res, next) => {
 			  	return obj.id_toko === toko.id
 			})
 			var subTotalToko = 0
+			var totalBerat = 0
 			var list_item = toko.produk.map(item => {
 				subTotalToko += item.itemKeranjang[0].subTotal
+				totalBerat = (item.berat * item.itemKeranjang[0].kuantitas) + totalBerat
 				return {
 					produkId: item.id,
 					kuantitas: item.itemKeranjang[0].kuantitas,
-					subTotal: item.itemKeranjang[0].subTotal
+					subTotal: item.itemKeranjang[0].subTotal,
 				}
 			})
 			total += subTotalToko
@@ -87,6 +91,7 @@ export const createOrder = async (req, res, next) => {
 				tokoId: toko.id,
 				subTotal: subTotalToko,
 				ongkosKirim: result[0]["ongkir"],
+				totalBerat: totalBerat,
 				itemOrder: {
 					create: list_item
 				}
@@ -117,6 +122,7 @@ export const createOrder = async (req, res, next) => {
 						tokoId: true,
 						subTotal: true,
 						ongkosKirim: true,
+						totalBerat: true,
 						toko: {
 							select: {
 								namaLengkap: true,
@@ -128,7 +134,7 @@ export const createOrder = async (req, res, next) => {
 							select: {
 								produkId: true,
 								kuantitas: true,
-								subTotal: true
+								subTotal: true,
 							}
 						}
 					}
@@ -144,6 +150,7 @@ export const createOrder = async (req, res, next) => {
 				data: {
 					produk: {
 						update: toko.itemOrder.create.map(item => {
+							redis.delCache(`/produk/ambil/${item.produkId}`)
 							return {
 								where: {
 									id: item.produkId
@@ -184,9 +191,6 @@ export const createOrder = async (req, res, next) => {
 				})
 			})
 		}
-		req.order = order
-
-		addPostingDoc(req, res)
 
 		res.json({ data : order, message: "Pesanan berhasil dibuat" })
 	} catch (e) {

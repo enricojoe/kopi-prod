@@ -3,127 +3,129 @@ import pos from "../modules/pos"
 
 export const getPosFee = async (req, res, next) => {
 	try {
-		const detail_barang = {
-			kode_pos_pengirim: req.body.kode_pos_pengirim,
-			kode_pos_penerima: req.body.kode_pos_penerima,
-			berat: req.body.berat,
-			panjang: req.body.panjang,
-			lebar: req.body.lebar,
-			tinggi: req.body.tinggi,
-			diameter: req.body.diameter,
-			harga: req.body.harga
-		}
-		const fee = await pos.getFee(detail_barang)
-		res.status(200).json({ data: fee.rs_fee.r_fee })
+		const toko_produk = req.body.toko_produk
+		var ongkir = []
+		toko_produk.forEach(async toko => {
+			var total_berat = 0
+			var total_harga = 0
+			toko.produk.forEach(produk => {
+				total_berat = total_berat + produk.itemKeranjang[0].totalBerat
+				total_harga = total_harga + produk.itemKeranjang[0].subTotal
+			})
+			var detail_barang = {
+				kode_pos_pengirim: toko.kodePos,
+				kode_pos_penerima: req.body.kode_pos_penerima,
+				berat: total_berat,
+				harga: total_harga
+			}
+			var fee = await pos.getFee(detail_barang)
+			ongkir.push({
+				id_toko: toko.id,
+				ongkir: fee.rs_fee.r_fee
+			})
+		})
+
+		res.status(200).json({ data: ongkir })
 	} catch (e) {
 		next(e)
 	}
 }
 
-export const addPostingDoc = async (req, res) => {
-	const penerima = await prisma.user.findUnique({
-		where: {
-			id: req.user.id
-		},
-		select: {
-			namaLengkap: true,
-			noTelpon: true,
-			alamat: true
-		}
-	})
-	const alamat_penerima = {
-		addresstype: "receiverlocation",
-		customertype: 1,
-		name: penerima.namaLengkap,
-		phone: penerima.noTelpon,
-		email: "",
-		address: penerima.alamat.detailAlamat,
-		subdistrict: penerima.alamat.kecamatan,
-		city: penerima.alamat.kabupaten,
-		province: penerima.alamat.provinsi,
-		zipcode: penerima.alamat.kodePos,
-		country: "Indonesia",
-		geolang: "",
-		geolat: "",
-		description: ""
-	}
-	const order_id = req.order.id
-	const order_toko = req.order.orderToko
-
-	order_toko.forEach(async toko => {
-		var alamat_pengirim = {
-			addresstype: "senderlocation",
+export const addPostingDoc = async (req, res, next) => {
+	try {
+		const order = await prisma.order.findUnique({
+			where: {
+				id: req.body.order_id
+			},
+			select: {
+				user: {
+					select: {
+						namaLengkap: true,
+						noTelpon: true,
+						alamat: true
+					}
+				},
+				orderToko: {
+					where: {
+						tokoId: req.user.id
+					},
+					select: {
+						id: true,
+						toko: {
+							select: {
+								namaLengkap: true,
+								noTelpon: true,
+								alamat: true
+							}
+						},
+						subTotal: true,
+						totalBerat: true
+					}
+				}
+			}
+		})
+		const alamat_penerima = {
+			addresstype: 'receiverlocation',
 			customertype: 1,
-			name: toko.toko.namaLengkap,
-			phone: toko.toko.noTelpon,
-			email: "",
-			address: toko.toko.alamat.detailAlamat,
-			subdistrict: toko.toko.alamat.kecamatan,
-			city: toko.toko.alamat.kabupaten,
-			province: toko.toko.alamat.provinsi,
-			zipcode: toko.toko.alamat.kodePos,
-			country: "Indonesia",
-			geolang: "",
-			geolat: "",
-			description: ""
+			name: order.user.namaLengkap,
+			phone: order.user.noTelpon,
+			email: '',
+			address: order.user.alamat.detailAlamat,
+			subdistrict: order.user.alamat.kecamatan,
+			city: order.user.alamat.kabupaten,
+			province: order.user.alamat.provinsi,
+			zipcode: order.user.alamat.kodePos,
+			country: 'Indonesia',
+			geolang: '',
+			geolat: '',
+			description: ''
+	    }
+
+		const alamat_pengirim = {
+			addresstype: 'senderlocation',
+			customertype: 1,
+			name: order.orderToko[0].toko.namaLengkap,
+			phone: order.orderToko[0].toko.noTelpon,
+			email: '',
+			address: order.orderToko[0].toko.alamat.detailAlamat,
+			subdistrict: order.orderToko[0].toko.alamat.kecamatan,
+			city: order.orderToko[0].toko.alamat.kabupaten,
+			province: order.orderToko[0].toko.alamat.provinsi,
+			zipcode: order.orderToko[0].toko.alamat.kodePos,
+			country: 'Indonesia',
+			geolang: '',
+			geolat: '',
+			description: ''
 		}
 		var detail_item = {
 			itemtypeid: 1,
-			productid: toko.id,
-			valuegoods: toko.subTotal,
-			weight: 1200,
-			length: 0,
-			width: 0,
-			height: 0,
+			productid: '240',
+			valuegoods: order.orderToko[0].subTotal,
+			weight: order.orderToko[0].totalBerat,
+			length: req.body.panjang ? req.body.panjang : 0,
+			width: req.body.lebar ? req.body.lebar : 0,
+			height: req.body.tinggi ? req.body.tinggi : 0,
 			codvalue: 0,
 			pin: 0,
-			itemdesc: `Barang dari toko ${toko.toko.namaLengkap}`
+			itemdesc: req.body.deskripsi_pesanan
 		}
 
-		var detail_pembayaran = [
-		    {
-		      name: "fee",
-		      value: 70000
-		    },
-		    {
-		      name: "insurance",
-		      value: 700
-		    }
+		var detail_pembayaran = [ 
+			{ name: 'fee', value: 70000 }, 
+			{ name: 'insurance', value: 700 } 
 		]
-		var pajak = [
-		    {
-		      name: "fee",
-		      value: 700
-		    },
-		    {
-		      name: "insurance",
-		      value: 700
-		    }
+		var pajak = [ 
+			{ name: 'fee', value: 700 }, 
+			{ name: 'insurance', value: 700 } 
 		]
 		var layanan = [
-			{
-		      name: "genreceipt",
-		      value: 1
-		    },
-		    {
-		      name: "printreceipt",
-		      value: 1
-		    },
-		    {
-		      name: "pickup",
-		      value: 0
-		    },
-		    {
-		      name: "delivery",
-		      value: 0
-		    },
-		    {
-		      name: "packing",
-		      value: 1
-		    }
+			{ name: 'genreceipt', value: 1 },
+			{ name: 'printreceipt', value: 1 },
+			{ name: 'pickup', value: 0 },
+			{ name: 'delivery', value: 1 },
+			{ name: 'packing', value: 1 }
 		]
-		var order_toko_id = order_id + toko.id
-		console.log(order_toko_id)
+		var order_toko_id = order.orderToko[0].id
 		var result = await pos.addPostingDoc({order_toko_id,
 											alamat_pengirim, 
 											alamat_penerima, 
@@ -131,7 +133,9 @@ export const addPostingDoc = async (req, res) => {
 											detail_pembayaran,
 											pajak,
 											layanan})
-		console.log(result)
-	})
-	return
+
+		res.status(200).json({ message: "Pesanan berhasil dikirim", data: result })
+	} catch (e) {
+		next(e)
+	}
 }

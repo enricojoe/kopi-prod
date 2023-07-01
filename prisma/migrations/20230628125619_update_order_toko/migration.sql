@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ItemOrder" ADD COLUMN     "totalBerat" DOUBLE PRECISION NOT NULL DEFAULT 0;

@@ -28,5 +28,8 @@ export default {
   },
   delCache: (key) => {
     client.del(key)
+  },
+  setExpire: (key, time=60*15) => {
+    client.expire(key, time)
   }
 }
