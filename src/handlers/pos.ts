@@ -3,6 +3,9 @@ import pos from "../modules/pos"
 
 export const getPosFee = async (req, res, next) => {
 	try {
+		if (req.body.kode_pos_penerima === undefined) {
+			res.status(200).json({ message: "data_kosong" })
+		}
 		const toko_produk = req.body.toko_produk
 		var ongkir = []
 		
