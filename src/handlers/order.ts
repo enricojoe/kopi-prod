@@ -86,12 +86,15 @@ export const createOrder = async (req, res, next) => {
 				}
 			})
 			total += subTotalToko
-			total_ongkir += result[0]["ongkir"]
+			total_ongkir += result[0]["ongkir_toko"].totalFee
 			return {
 				tokoId: toko.id,
 				subTotal: subTotalToko,
-				ongkosKirim: result[0]["ongkir"],
+				ongkosKirim: result[0]["ongkir_toko"].totalFee,
 				totalBerat: totalBerat,
+				layananPengiriman: {
+					create: result[0]["ongkir_toko"]
+				},
 				itemOrder: {
 					create: list_item
 				}

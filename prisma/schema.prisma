@@ -15,43 +15,43 @@ datasource db {
 }
 
 model Provinsi {
-  kode String @id
+  kode     String @id
   provinsi String
 
   kabupaten Kabupaten[]
 }
 
 model Kabupaten {
-  kode String @id
+  kode          String @id
   kodeKabupaten String
-  tipe String
-  kabupaten String
+  tipe          String
+  kabupaten     String
 
   kodeProvinsi String
-  provinsi Provinsi @relation(fields: [kodeProvinsi], references: [kode])
+  provinsi     Provinsi @relation(fields: [kodeProvinsi], references: [kode])
 
   kecamatan Kecamatan[]
 }
 
 model Kecamatan {
-  kode String @id
+  kode          String @id
   kodeKecamatan String
-  kecamatan String
+  kecamatan     String
 
   kodeKabupaten String
-  kabupaten Kabupaten @relation(fields: [kodeKabupaten], references: [kode])
+  kabupaten     Kabupaten @relation(fields: [kodeKabupaten], references: [kode])
 
   desa Desa[]
 }
 
 model Desa {
-  kode String @id
+  kode     String @id
   kodeDesa String
-  kodePos String
-  desa String
+  kodePos  String
+  desa     String
 
   kodeKecamatan String
-  kecamatan Kecamatan @relation(fields: [kodeKecamatan], references: [kode])
+  kecamatan     Kecamatan @relation(fields: [kodeKecamatan], references: [kode])
 }
 
 model Admin {
@@ -145,10 +145,10 @@ model Produk {
   harga      Float
   stok       Int
   terjual    Int      @default(0)
-  berat      Float      @default(0)
-  panjang    Float      @default(0)
-  tinggi     Float      @default(0)
-  lebar      Float      @default(0)
+  berat      Float    @default(0)
+  panjang    Float    @default(0)
+  tinggi     Float    @default(0)
+  lebar      Float    @default(0)
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -186,8 +186,8 @@ model ItemKeranjang {
   createdAt  DateTime @default(now())
   modifiedAt DateTime @default(now()) @updatedAt
 
-  kuantitas Int   @default(0)
-  subTotal  Float @default(0)
+  kuantitas  Int   @default(0)
+  subTotal   Float @default(0)
   totalBerat Float @default(0)
 
   produkId String
@@ -243,9 +243,10 @@ model OrderToko {
   ongkosKirim   Float          @default(0)
   subTotal      Float          @default(0)
   statusPesanan STATUS_PESANAN @default(PESANAN_DITERIMA)
-  totalBerat Float @default(0)
+  totalBerat    Float          @default(0)
 
-  itemOrder ItemOrder[]
+  itemOrder         ItemOrder[]
+  layananPengiriman LayananPengiriman?
 }
 
 model Order {
@@ -266,6 +267,24 @@ model Order {
   orderToko      OrderToko[]
   transaksiOrder TransaksiOrder?
   notifikasi     Notifikasi[]
+}
+
+model LayananPengiriman {
+  id        String   @id @unique @default(cuid())
+  createdAt DateTime @default(now())
+
+  serviceCode  String
+  serviceName  String
+  fee          Float
+  feeTax       Float
+  insurance    Float
+  insuranceTax Float
+  totalFee     Float
+  itemValue    Float
+  notes        String
+
+  orderTokoId String    @unique
+  orderToko   OrderToko @relation(fields: [orderTokoId], references: [id])
 }
 
 model TransaksiOrder {

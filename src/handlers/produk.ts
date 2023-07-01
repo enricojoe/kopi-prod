@@ -43,10 +43,10 @@ export const createProduct = async (req, res, next) => {
 				stok: parseInt(req.body.stok),
 				gambar: image,
 				userId: req.user.id,
-				tinggi: req.body.tinggi,
-				berat: req.body.berat,
-				lebar: req.body.lebar,
-				panjang: req.body.panjang,
+				tinggi: parseFloat(req.body.tinggi),
+				berat: parseFloat(req.body.berat),
+				lebar: parseFloat(req.body.lebar),
+				panjang: parseFloat(req.body.panjang),
 				kategori_produk: {
 					create: kategori
 				}
@@ -277,10 +277,10 @@ export const updateProduct = async (req, res, next) => {
 				harga: parseFloat(req.body.harga),
 				stok: parseInt(req.body.stok),
 				gambar: image,
-				tinggi: req.body.tinggi,
-				berat: req.body.berat,
-				lebar: req.body.lebar,
-				panjang: req.body.panjang,
+				tinggi: parseFloat(req.body.tinggi),
+				berat: parseFloat(req.body.berat),
+				lebar: parseFloat(req.body.lebar),
+				panjang: parseFloat(req.body.panjang),
 				kategori_produk: {
 					create: kategori
 				}

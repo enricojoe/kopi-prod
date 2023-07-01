@@ -3,46 +3,23 @@ import pos from "../modules/pos"
 
 export const getPosFee = async (req, res, next) => {
 	try {
-		// toko_produk = [
-		// 	id: "id_toko",
-		// 	kodePos: "kode_pos",
-		// 	produk: {
-		// 		itemKeranjang: [
-		// 			totalBerat: 10000,
-		// 			subTotal: 2000
-		// 		]
-		// 	}
-		// ]
 		const toko_produk = req.body.toko_produk
 		var ongkir = []
-		var tes = ""
-		console.log(toko_produk)
 		
-		await toko_produk.forEach(async toko => {
-			var total_berat = 0
-			var total_harga = 0
-			toko.produk.forEach(produk => {
-				total_berat = total_berat + produk.itemKeranjang[0].totalBerat
-				total_harga = total_harga + produk.itemKeranjang[0].subTotal
-			})
+		for (let i = 0; i < toko_produk.length; i++) {
 			var detail_barang = {
-				kode_pos_pengirim: toko.kodePos,
+				kode_pos_pengirim: toko_produk[i].kodePos,
 				kode_pos_penerima: req.body.kode_pos_penerima,
-				berat: total_berat,
-				harga: total_harga
+				berat: toko_produk[i].total_berat,
+				harga: toko_produk[i].total_harga
 			}
 			var fee = await pos.getFee(detail_barang)
 			ongkir.push({
-				id_toko: toko.id,
+				id_toko: toko_produk[i].id,
 				ongkir: fee.rs_fee.r_fee
 			})
-			tes = "Ini kalimatnya diganti"
-			console.log(tes)
-		})
-		console.log("=============")
-		console.log(tes)
-		console.log(ongkir)
-		console.log("=============")
+		}
+
 		res.status(200).json({ data: ongkir })
 	} catch (e) {
 		next(e)
