@@ -2,7 +2,14 @@ import { createClient } from 'redis'
 var client;
 
 (async () => {
-  client = createClient();
+  client = createClient({
+      password: 'WsebiSc3ldHIXZ2kKjtvD4NXMiW2OmGU',
+      socket: {
+          host: 'redis-19149.c292.ap-southeast-1-1.ec2.cloud.redislabs.com',
+          port: 19149
+      }
+    }
+);
 
   client
   .on("error", (error) => console.error(`Error : ${error}`))

@@ -3,9 +3,22 @@ import pos from "../modules/pos"
 
 export const getPosFee = async (req, res, next) => {
 	try {
+		// toko_produk = [
+		// 	id: "id_toko",
+		// 	kodePos: "kode_pos",
+		// 	produk: {
+		// 		itemKeranjang: [
+		// 			totalBerat: 10000,
+		// 			subTotal: 2000
+		// 		]
+		// 	}
+		// ]
 		const toko_produk = req.body.toko_produk
 		var ongkir = []
-		toko_produk.forEach(async toko => {
+		var tes = ""
+		console.log(toko_produk)
+		
+		await toko_produk.forEach(async toko => {
 			var total_berat = 0
 			var total_harga = 0
 			toko.produk.forEach(produk => {
@@ -23,8 +36,13 @@ export const getPosFee = async (req, res, next) => {
 				id_toko: toko.id,
 				ongkir: fee.rs_fee.r_fee
 			})
+			tes = "Ini kalimatnya diganti"
+			console.log(tes)
 		})
-
+		console.log("=============")
+		console.log(tes)
+		console.log(ongkir)
+		console.log("=============")
 		res.status(200).json({ data: ongkir })
 	} catch (e) {
 		next(e)
@@ -134,8 +152,30 @@ export const addPostingDoc = async (req, res, next) => {
 											pajak,
 											layanan})
 
-		res.status(200).json({ message: "Pesanan berhasil dikirim", data: result })
+		res.status(200).json({ message: "Permintaan pickup dikirim", data: result })
 	} catch (e) {
 		next(e)
 	}
 }
+
+
+// const produk_keranjang = [
+// 			{
+// 				id_toko: "ini id toko",
+// 				produk ['idproduk1', 'idproduk2']
+// 			},
+// 			{
+// 				id_toko: "ini id toko",
+// 				produk ['idproduk1', 'idproduk2']
+// 			},
+// 		]
+
+// 		var ongkir = []
+// 		produk_keranjang.forEach(item => {
+// 			var detail_barang = {
+// 				kode_pos_pengirim: toko.kodePos,
+// 				kode_pos_penerima: req.body.kode_pos_penerima,
+// 				berat: total_berat,
+// 				harga: total_harga
+// 			}
+// 		})
