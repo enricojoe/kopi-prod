@@ -26,13 +26,15 @@ export const createCartItem = async (req, res, next) => {
             },
             update: {
                 kuantitas: parseInt(req.body.kuantitas),
-                subTotal: produk.harga * parseInt(req.body.kuantitas)
+                subTotal: produk.harga * parseInt(req.body.kuantitas),
+                totalBerat: produk.berat * parseInt(req.body.kuantitas)
             },
             create: {
                 keranjangId: keranjang.id,
                 produkId: produk.id,
                 kuantitas: parseInt(req.body.kuantitas),
-                subTotal: produk.harga * parseInt(req.body.kuantitas)
+                subTotal: produk.harga * parseInt(req.body.kuantitas),
+                totalBerat: produk.berat * parseInt(req.body.kuantitas)
             }
         });
         res.status(200).json({ data: item });
@@ -115,6 +117,11 @@ export const getUserCart = async (req, res, next) => {
                 id: true,
                 namaLengkap: true,
                 noTelpon: true,
+                alamat: {
+                    select: {
+                        kodePos: true
+                    }
+                },
                 produk: {
                     where: {
                         itemKeranjang: {
@@ -130,6 +137,7 @@ export const getUserCart = async (req, res, next) => {
                         namaProduk: true,
                         gambar: true,
                         harga: true,
+                        berat: true,
                         itemKeranjang: {
                             where: {
                                 Keranjang: {
@@ -137,7 +145,8 @@ export const getUserCart = async (req, res, next) => {
                                 }
                             },
                             select: {
-                                kuantitas: true
+                                kuantitas: true,
+                                totalBerat: true
                             }
                         }
                     }

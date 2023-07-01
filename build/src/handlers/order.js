@@ -1,8 +1,15 @@
 import prisma from "../db.js";
 import snap from "../midtrans.js";
-import { getFee } from "../modules/pos.js";
+import pos from "../modules/pos.js";
+import redis from "../modules/redis.js";
 export const tes = async (req, res, next) => {
-    const postalCode = await getFee();
+    const detail_barang = {
+        kode_pos_pengirim: '34581',
+        kode_pos_penerima: '34511',
+        berat: 10,
+        harga: 10000
+    };
+    const postalCode = await pos.getFee(detail_barang);
     res.json(postalCode);
 };
 // item order (per produk => produk, kuantitas pesanan)
@@ -38,6 +45,7 @@ export const createOrder = async (req, res, next) => {
                     },
                     select: {
                         id: true,
+                        berat: true,
                         itemKeranjang: {
                             where: {
                                 Keranjang: {
@@ -62,20 +70,26 @@ export const createOrder = async (req, res, next) => {
                 return obj.id_toko === toko.id;
             });
             var subTotalToko = 0;
+            var totalBerat = 0;
             var list_item = toko.produk.map(item => {
                 subTotalToko += item.itemKeranjang[0].subTotal;
+                totalBerat = (item.berat * item.itemKeranjang[0].kuantitas) + totalBerat;
                 return {
                     produkId: item.id,
                     kuantitas: item.itemKeranjang[0].kuantitas,
-                    subTotal: item.itemKeranjang[0].subTotal
+                    subTotal: item.itemKeranjang[0].subTotal,
                 };
             });
             total += subTotalToko;
-            total_ongkir += result[0]["ongkir"];
+            total_ongkir += result[0]["ongkir"].totalFee;
             return {
                 tokoId: toko.id,
                 subTotal: subTotalToko,
-                ongkosKirim: result[0]["ongkir"],
+                ongkosKirim: result[0]["ongkir"].totalFee,
+                totalBerat: totalBerat,
+                layananPengiriman: {
+                    create: result[0]["ongkir"]
+                },
                 itemOrder: {
                     create: list_item
                 }
@@ -101,14 +115,23 @@ export const createOrder = async (req, res, next) => {
                 metodePembayaran: true,
                 orderToko: {
                     select: {
+                        id: true,
                         tokoId: true,
                         subTotal: true,
                         ongkosKirim: true,
+                        totalBerat: true,
+                        toko: {
+                            select: {
+                                namaLengkap: true,
+                                noTelpon: true,
+                                alamat: true
+                            }
+                        },
                         itemOrder: {
                             select: {
                                 produkId: true,
                                 kuantitas: true,
-                                subTotal: true
+                                subTotal: true,
                             }
                         }
                     }
@@ -123,6 +146,7 @@ export const createOrder = async (req, res, next) => {
                 data: {
                     produk: {
                         update: toko.itemOrder.create.map(item => {
+                            redis.delCache(`/produk/ambil/${item.produkId}`);
                             return {
                                 where: {
                                     id: item.produkId

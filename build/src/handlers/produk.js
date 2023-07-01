@@ -40,6 +40,10 @@ export const createProduct = async (req, res, next) => {
                 stok: parseInt(req.body.stok),
                 gambar: image,
                 userId: req.user.id,
+                tinggi: parseFloat(req.body.tinggi),
+                berat: parseFloat(req.body.berat),
+                lebar: parseFloat(req.body.lebar),
+                panjang: parseFloat(req.body.panjang),
                 kategori_produk: {
                     create: kategori
                 }
@@ -105,8 +109,8 @@ export const getAllProducts = async (req, res, next) => {
                 terjual: 'desc'
             }
         });
-        // redis.delCache(req.originalUrl)
         redis.caching(req.originalUrl, { produk, terlaris });
+        redis.setExpire(req.originalUrl);
         res.status(200).json({ data: { produk, terlaris } });
     }
     catch (e) {
@@ -155,6 +159,7 @@ export const getUserProducts = async (req, res, next) => {
             }
         });
         redis.caching(req.originalUrl, user);
+        redis.setExpire(req.originalUrl);
         res.status(200).json({ data: user });
     }
     catch (e) {
@@ -205,6 +210,7 @@ export const getProductById = async (req, res, next) => {
             }
         });
         redis.caching(req.originalUrl, produk);
+        redis.setExpire(req.originalUrl);
         res.status(200).json({ data: produk });
     }
     catch (e) {
@@ -261,6 +267,10 @@ export const updateProduct = async (req, res, next) => {
                 harga: parseFloat(req.body.harga),
                 stok: parseInt(req.body.stok),
                 gambar: image,
+                tinggi: parseFloat(req.body.tinggi),
+                berat: parseFloat(req.body.berat),
+                lebar: parseFloat(req.body.lebar),
+                panjang: parseFloat(req.body.panjang),
                 kategori_produk: {
                     create: kategori
                 }
@@ -273,6 +283,7 @@ export const updateProduct = async (req, res, next) => {
                 }
             }
         });
+        redis.delCache(`/produk/ambil/${updated.id}`);
         res.status(200).json({ data: updated });
     }
     catch (e) {
@@ -289,8 +300,12 @@ export const deleteProduct = async (req, res, next) => {
         const deleted = await prisma.produk.delete({
             where: {
                 id: req.params.produkId
+            },
+            select: {
+                id: true
             }
         });
+        redis.delCache(`/produk/ambil/${deleted.id}`);
         res.status(200).json({ data: deleted });
     }
     catch (e) {
@@ -345,6 +360,7 @@ export const searchProduct = async (req, res, next) => {
             }
         });
         redis.caching(req.originalUrl, cari);
+        redis.setExpire(req.originalUrl);
         res.status(200).json({ data: cari });
     }
     catch (e) {
