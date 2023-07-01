@@ -57,7 +57,8 @@ export const addPostingDoc = async (req, res, next) => {
 							}
 						},
 						subTotal: true,
-						totalBerat: true
+						totalBerat: true,
+						layananPengiriman: true
 					}
 				}
 			}
@@ -109,12 +110,12 @@ export const addPostingDoc = async (req, res, next) => {
 		}
 
 		var detail_pembayaran = [ 
-			{ name: 'fee', value: 70000 }, 
-			{ name: 'insurance', value: 700 } 
+			{ name: 'fee', value: order.orderToko[0].layananPengiriman.fee }, 
+			{ name: 'insurance', value: order.orderToko[0].layananPengiriman.insurance } 
 		]
 		var pajak = [ 
-			{ name: 'fee', value: 700 }, 
-			{ name: 'insurance', value: 700 } 
+			{ name: 'fee', value: order.orderToko[0].layananPengiriman.feeTax }, 
+			{ name: 'insurance', value: order.orderToko[0].layananPengiriman.insuranceTax } 
 		]
 		var layanan = [
 			{ name: 'genreceipt', value: 1 },
