@@ -273,15 +273,16 @@ model LayananPengiriman {
   id        String   @id @unique @default(cuid())
   createdAt DateTime @default(now())
 
-  serviceCode  String
-  serviceName  String
-  fee          Float
-  feeTax       Float
-  insurance    Float
-  insuranceTax Float
-  totalFee     Float
-  itemValue    Float
-  notes        String
+  penyediaLayanan String @default("POS Indonesia")
+  serviceCode     String
+  serviceName     String
+  fee             Float
+  feeTax          Float
+  insurance       Float
+  insuranceTax    Float
+  totalFee        Float
+  itemValue       Float
+  notes           String
 
   orderTokoId String    @unique
   orderToko   OrderToko @relation(fields: [orderTokoId], references: [id])

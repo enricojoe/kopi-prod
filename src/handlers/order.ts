@@ -87,6 +87,9 @@ export const createOrder = async (req, res, next) => {
 			})
 			total += subTotalToko
 			total_ongkir += result[0]["ongkir"].totalFee
+			if (result[0]["ongkir"].serviceCode === "AMBIL") {
+				result[0]["ongkir"].penyediaLayanan = "Ambil Sendiri"
+			}
 			return {
 				tokoId: toko.id,
 				subTotal: subTotalToko,
@@ -436,6 +439,11 @@ export const getUserOrderDetail = async (req, res, next) => {
 						},
 						kuantitas: true,
 						subTotal: true
+					}
+				},
+				layananPengiriman: {
+					select: {
+						penyediaLayanan: true
 					}
 				}
 			}
