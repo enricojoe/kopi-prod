@@ -738,6 +738,11 @@ export const getMyOrderDetail = async (req, res, next) => {
 						subTotal: true,
 						ongkosKirim: true,
 						statusPesanan: true,
+						layananPengiriman: {
+							select: {
+								penyediaLayanan: true
+							}
+						},
 						itemOrder: {
 							select: {
 								produk: {
